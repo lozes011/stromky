@@ -12,16 +12,9 @@
   --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
 
   /* barvy poli textu */
-  --smrk:#e6f5e9;
-  --borovice:#dff6ea;
-  --jedle:#C1FFC1;
-  --kvetinac:#FFE4B5;
-  --stojan:#eef1f4;
-  --haluzimelo:#fff8d9;
-  --sluzby:#efe5da;
-  --kusy:#ffe9d6;
-  --akce: var(--jedle);
-  --treefood:#efe6ff;
+  --smrk:#e6f5e9; --borovice:#dff6ea; --jedle:#C1FFC1;
+  --kvetinac:#FFE4B5; --stojan:#eef1f4; --haluzimelo:#fff8d9;
+  --sluzby:#efe5da; --kusy:#ffe9d6; --akce: var(--jedle); --treefood:#efe6ff;
   --text-dark:#0b1a12;
 
   /* označení řádku po změně */
@@ -32,10 +25,9 @@
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
 .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
 h1{margin:0;font-size:1.6rem}
-.muted{color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
 
-/* Horní lišta s nadpisem a resetem */
+/* Horní lišta */
 .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
 .reset-btn{
   padding:10px 14px; border-radius:12px; border:1px solid var(--line);
@@ -43,47 +35,30 @@ h1{margin:0;font-size:1.6rem}
 }
 .reset-btn:active{ transform:scale(.98) }
 
-/* KPIs */
+/* KPI karty */
 .kpis{display:grid;gap:8px}
 @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
 .kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
 .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
 .kpi .v{font-size:1.35rem;font-weight:900}
-.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
-
-/* Obal tabulky */
-.table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px}
+.mono{font-family: ui-monospace, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 
 /* Tabulka */
+.table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px}
 .table{width:100%;border-collapse:collapse;table-layout:fixed; min-width:720px;}
 .table thead th{position:sticky;top:0;background:var(--card);z-index:2;color:var(--text)}
 .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
-
-/* zarovnání sloupců */
-th.col-id,   td.col-id   { text-align:center; }
-th.col-name, td.col-name { text-align:left; }
-th.col-price,td.col-price{ text-align:center; }
-th.col-qty,  td.col-qty  { text-align:center; }
-th.col-sum,  td.col-sum  { text-align:center; }
-
-/* šířky */
-.col-id{width:10%}
-.col-name{width:auto}
-.col-price{width:15%}
-.col-qty{width:20%}
-.col-sum{width:20%}
-
-/* tmavý text v těle tabulky */
+th.col-id,td.col-id{text-align:center}
+th.col-name,td.col-name{text-align:left}
+th.col-price,td.col-price{text-align:center}
+th.col-qty,td.col-qty{text-align:center}
+th.col-sum,td.col-sum{text-align:center}
+.col-id{width:10%}.col-name{width:auto}.col-price{width:15%}.col-qty{width:20%}.col-sum{width:20%}
 .table tbody td{color:var(--text-dark)}
-.table tbody td.mono{color:var(--text-dark)}
+.rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px;margin-right:10px}
 
-.rowid{
-  display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;
-  padding:2px 8px;border-radius:999px;margin-right:10px;
-}
-
-/* Barvy CELÝCH řádků dle kategorie */
+/* Barvy řádků dle kategorie */
 tr.row-smrk td{background:var(--smrk)}
 tr.row-borovice td{background:var(--borovice)}
 tr.row-jedle td{background:var(--jedle)}
@@ -91,114 +66,46 @@ tr.row-kvetinac td{background:var(--kvetinac)}
 tr.row-stojan td{background:var(--stojan)}
 tr.row-haluzimelo td{background:var(--haluzimelo)}
 tr.row-sluzby td{background:var(--sluzby)}
-tr.row-kusy td{background:var(--kusy)}
 tr.row-akce td{background:var(--akce)}
 tr.row-treefood td{background:var(--treefood)}
 
 /* Ovládání kusů */
-.qtyctrl{
-  display:grid;
-  grid-template-columns: var(--qty-btn) minmax(44px, 1fr) var(--qty-btn);
-  gap:.35rem; align-items:center; justify-items:center;
-  width:100%; max-width: clamp(140px, 32vw, 220px);
-}
-:root{ --qty-btn: 38px; }
-.qtyctrl .btn{
-  width:var(--qty-btn); height:var(--qty-btn);
-  border:1px solid var(--line); background:var(--btn);
-  color:#e8f5ee; border-radius:12px; font-size:1.05rem;
-  font-weight:800; cursor:pointer; position:relative;
-  user-select:none; -webkit-user-select:none;
-}
-.qtyctrl .btn::before{ content:""; position:absolute; inset:-6px; }
+.qtyctrl{display:grid;grid-template-columns:38px minmax(44px,1fr) 38px;gap:.35rem;align-items:center;justify-items:center;max-width:220px;margin:0 auto}
+.qtyctrl .btn{width:38px;height:38px;border:1px solid var(--line);background:var(--btn);color:#e8f5ee;border-radius:12px;font-weight:800;cursor:pointer}
 .btn.plus{background:linear-gradient(0deg, var(--btn-accent-2), var(--btn-accent))}
 .btn.minus{background:#163a28}
-.btn:active{transform:scale(.98)}
-.qtyctrl .qty{
-  width:100%; min-width:44px; height:var(--qty-btn);
-  text-align:center; background:#f2f7f4;
-  border:1px solid var(--line); color:var(--text-dark);
-  border-radius:10px; font-weight:800;
-}
+.qtyctrl .qty{width:100%;height:38px;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;font-weight:800}
 
-.section-title{margin:0 0 8px;font-size:1.1rem}
-
-/* === JEN HOVER + uloženo === */
-.table tbody tr:not(.mark-saved):hover td{
-  background:#29c374 !important; color:#fff !important;
-}
-.table tbody tr:focus td,
-.table tbody tr:active td,
-.table tbody tr:focus-within td,
-.table tbody td:focus,
-.table tbody td:active{
-  background:inherit !important; color:inherit !important;
-}
-.table tbody tr.mark-saved td{
-  background:var(--mark-saved-bg) !important; color:var(--text-dark) !important;
-}
-.table tbody tr.mark-saved:hover td{
-  background:var(--mark-saved-bg) !important; color:var(--text-dark) !important;
-}
+/* Jednoduché chování: jen hover + uložené */
+.table tbody tr:not(.mark-saved):hover td{background:#29c374 !important;color:#fff !important}
+.table tbody tr.mark-saved td{background:var(--mark-saved-bg) !important;color:var(--text-dark) !important}
+.table tbody tr.mark-saved:hover td{background:var(--mark-saved-bg) !important;color:var(--text-dark) !important}
 
 /* Sticky hlavička */
-.table thead th{
-  background: linear-gradient(#0a1c14,#0a1c14);
-  box-shadow: 0 1px 0 var(--line);
-  z-index: 3;
-}
+.table thead th{background:linear-gradient(#0a1c14,#0a1c14);box-shadow:0 1px 0 var(--line)}
 
-/* === RESPONSIVE: mobil === */
+/* Mobil */
 @media (max-width:640px){
-  .rowid{padding:1px 7px; font-size:.95rem; margin-right:8px}
-  :root{--qty-btn:32px}
-  .qtyctrl{gap:.28rem;max-width:clamp(120px,38vw,170px)}
-  .qtyctrl .btn{border-radius:9px;font-size:.95rem}
-  .qtyctrl .qty{font-size:16px}
-
-  .col-id{width:9%}
-  .col-price{width:14%}
-  .col-qty{width:18%}
-  .col-sum{width:18%}
-  .col-name{width:auto}
-
+  .qtyctrl{grid-template-columns:32px minmax(44px,1fr) 32px}
+  .qtyctrl .btn,.qtyctrl .qty{height:32px}
   th.col-qty, td.col-qty{ position:sticky; right:0; z-index:4; }
-  td.col-qty{ box-shadow: -6px 0 8px rgba(0,0,0,.18) }
-
-  th.col-price::after { content:"Cena/ks"; }
-  th.col-sum::after   { content:"Suma"; }
-  th.col-qty::after   { content:"Prod."; }
-  th.col-price, th.col-sum, th.col-qty{
-    color:transparent; position:relative; overflow:hidden;
-  }
-  th.col-price::after, th.col-sum::after, th.col-qty::after{
-    color:var(--text); position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:center; padding:0 6px;
-  }
-
-  .table{ min-width: 680px; }
+  td.col-qty{ box-shadow:-6px 0 8px rgba(0,0,0,.18) }
+  th.col-price::after{content:"Cena/ks"} th.col-sum::after{content:"Suma"} th.col-qty::after{content:"Prod."}
+  th.col-price,th.col-sum,th.col-qty{color:transparent;position:relative;overflow:hidden}
+  th.col-price::after,th.col-sum::after,th.col-qty::after{color:var(--text);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 6px}
+  .table{min-width:680px}
 }
 
-/* Extra úzké telefony */
-@media (max-width:360px){
-  .table{ min-width:640px; }
-}
-
-/* honeypot skrytí */
-.hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
-
-/* AG kvóta */
+/* AG – jen číslo */
 #agQty{ display:inline-block; min-width:2ch; text-align:center; }
+.section-title{margin:0 0 8px;font-size:1.1rem}
 </style>
-
 </head>
 <body>
 <div class="wrap">
-
-  <!-- Horní lišta: nadpis + Reset (váže se na #calcForm) -->
   <div class="topbar">
     <h1>Dnešní prodej</h1>
-    <button type="reset" form="calcForm" class="reset-btn" aria-label="Vynulovat formulář">Reset</button>
+    <button type="reset" form="calcForm" class="reset-btn">Reset</button>
   </div>
 
   <div class="card">
@@ -206,7 +113,6 @@ tr.row-treefood td{background:var(--treefood)}
       <div class="kpi"><h3>Dnešní prodej</h3><div class="v mono" id="todaySales">0,00 Eur</div></div>
       <div class="kpi"><h3>Odevzdat do obálky</h3><div class="v mono" id="envelope">0,00 Eur</div></div>
       <div class="kpi"><h3>Co zůstává dnes prodejci</h3><div class="v mono" id="sellerKeep">0,00 Eur</div></div>
-
       <div class="kpi"><h3>Počet prodaných stromů</h3><div class="v mono" id="cntStromy">0</div></div>
       <div class="kpi"><h3>Počet prodaných květináčů</h3><div class="v mono" id="cntKvetinace">0</div></div>
       <div class="kpi"><h3>Počet prodaných stojanů</h3><div class="v mono" id="cntStojany">0</div></div>
@@ -216,16 +122,7 @@ tr.row-treefood td{background:var(--treefood)}
 
   <div class="card">
     <div class="section-title">Seznam položek</div>
-
-    <!-- FORM pro antibot + reset -->
     <form id="calcForm" autocomplete="off" novalidate>
-      <!-- honeypot -->
-      <div class="hp" aria-hidden="true">
-        <label>Leave this field empty:
-          <input type="text" name="website" autocomplete="off" tabindex="-1">
-        </label>
-      </div>
-
       <div class="table-wrap">
         <table class="table" id="tbl">
           <thead>
@@ -245,313 +142,205 @@ tr.row-treefood td{background:var(--treefood)}
 </div>
 
 <script>
-/* ====== formátování ====== */
-const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtEur = (n)=> `${fmtNum(n)} Eur`;
+/* ===== Konfigurace / data ===== */
+const FEE = {
+  haluz: 0.7,       // €/kus (AB,AC,AD)
+  stojan: 1,        // €/kus (U–Y)
+  hnojivo: 0.3      // €/kus (AI)
+};
+const CATS = { TREES:['smrk','borovice','jedle'], KV:'kvetinac', STAND:'stojan', SVC:'sluzby', HALUZ:'haluzimelo' };
 
-/* ====== DATA ====== */
 const ITEMS = [
-  /* Stromy */
-  { id:'B',  name:'Smrek',             price:23.60, cat:'smrk' },
-  { id:'C',  name:'Smrek',             price:39.90, cat:'smrk' },
+  // Stromy
+  { id:'B',  name:'Smrek',          price:23.60, cat:'smrk' },
+  { id:'C',  name:'Smrek',          price:39.90, cat:'smrk' },
+  { id:'D',  name:'Borovice',       price:29.90, cat:'borovice' },
+  { id:'E',  name:'Borovice',       price:39.90, cat:'borovice' },
+  { id:'F',  name:'Borovice',       price:49.90, cat:'borovice' },
+  { id:'G',  name:'Borovice',       price:59.90, cat:'borovice' },
+  { id:'H',  name:'Jedľa Akcia',    price:16.50, cat:'jedle' },
+  { id:'I',  name:'Jedľa Akcia',    price:23.30, cat:'jedle' },
+  { id:'J',  name:'Jedľa Akcia',    price:29.90, cat:'jedle' },
+  { id:'K',  name:'Jedľa Akcia',    price:36.40, cat:'jedle' },
+  { id:'L',  name:'Jedľa Akcia',    price:43.40, cat:'jedle' },
+  { id:'M',  name:'Jedľa Nordmann', price:49.90, cat:'jedle' },
+  { id:'N',  name:'Jedľa Nordmann', price:59.90, cat:'jedle' },
+  { id:'O',  name:'Jedľa Premium',  price:71.50, cat:'jedle' },
+  { id:'P',  name:'Jedľa Premium',  price:85.50, cat:'jedle' },
+  { id:'Q',  name:'Jedľa Premium',  price:99.50, cat:'jedle' },
+  { id:'R',  name:'Jedľa Premium',  price:135.00,cat:'jedle' },
+  { id:'S',  name:'Jedľa Premium',  price:165.00,cat:'jedle' },
 
-  { id:'D',  name:'Borovice',          price:29.90, cat:'borovice' },
-  { id:'E',  name:'Borovice',          price:39.90, cat:'borovice' },
-  { id:'F',  name:'Borovice',          price:49.90, cat:'borovice' },
-  { id:'G',  name:'Borovice',          price:59.90, cat:'borovice' },
+  // Květináče
+  { id:'T',  name:'Květináč',       price:36.40, cat:'kvetinac' },
+  { id:'Z',  name:'Květináč',       price:43.40, cat:'kvetinac' },
+  { id:'AA', name:'Květináč',       price:49.90, cat:'kvetinac' },
 
-  { id:'H',  name:'Jedľa Akcia',       price:16.50, cat:'jedle' },
-  { id:'I',  name:'Jedľa Akcia',       price:23.30, cat:'jedle' },
-  { id:'J',  name:'Jedľa Akcia',       price:29.90, cat:'jedle' },
-  { id:'K',  name:'Jedľa Akcia',       price:36.40, cat:'jedle' },
-  { id:'L',  name:'Jedľa Akcia',       price:43.40, cat:'jedle' },
-  { id:'M',  name:'Jedľa Nordmann',    price:49.90, cat:'jedle' },
-  { id:'N',  name:'Jedľa Nordmann',    price:59.90, cat:'jedle' },
-  { id:'O',  name:'Jedľa Premium',     price:71.50, cat:'jedle' },
-  { id:'P',  name:'Jedľa Premium',     price:85.50, cat:'jedle' },
-  { id:'Q',  name:'Jedľa Premium',     price:99.50, cat:'jedle' },
-  { id:'R',  name:'Jedľa Premium',     price:135.00, cat:'jedle' },
-  { id:'S',  name:'Jedľa Premium',     price:165.00, cat:'jedle' },
+  // Stojany
+  { id:'U',  name:'Stojan',         price:34.00, cat:'stojan' },
+  { id:'V',  name:'Stojan',         price:46.00, cat:'stojan' },
+  { id:'W',  name:'Stojan',         price:52.00, cat:'stojan' },
+  { id:'X',  name:'Stojan',         price:65.00, cat:'stojan' },
+  { id:'Y',  name:'Stojan',         price:83.00, cat:'stojan' },
 
-  /* Květináče */
-  { id:'T',  name:'Květináč',          price:36.40, cat:'kvetinac' },
+  // Haluz / Imelo
+  { id:'AB', name:'Haluz',          price:3.90,  cat:'haluzimelo' },
+  { id:'AC', name:'Haluz',          price:4.90,  cat:'haluzimelo' },
+  { id:'AD', name:'Imelo',          price:2.90,  cat:'haluzimelo' },
 
-  /* Stojany */
-  { id:'U',  name:'Stojan',            price:34.00, cat:'stojan' },
-  { id:'V',  name:'Stojan',            price:46.00, cat:'stojan' },
-  { id:'W',  name:'Stojan',            price:52.00, cat:'stojan' },
-  { id:'X',  name:'Stojan',            price:65.00, cat:'stojan' },
-  { id:'Y',  name:'Stojan',            price:83.00, cat:'stojan' },
+  // Služby (prodejci)
+  { id:'AE', name:'Frézování',      price:1.90,  cat:'sluzby', toSeller:true },
+  { id:'AF', name:'Balení',         price:1.90,  cat:'sluzby', toSeller:true },
 
-  /* Květináče (pokračování) */
-  { id:'Z',  name:'Květináč',          price:43.40, cat:'kvetinac' },
-  { id:'AA', name:'Květináč',          price:49.90, cat:'kvetinac' },
-
-  /* Doplňky + služby */
-  { id:'AB', name:'Haluz',             price:3.90,  cat:'haluzimelo' },
-  { id:'AC', name:'Haluz',             price:4.90,  cat:'haluzimelo' },
-  { id:'AD', name:'Imelo',             price:2.90,  cat:'haluzimelo' },
-
-  /* SLUŽBY (prodejci) */
-  { id:'AE', name:'Frézování',         price:1.90,  cat:'sluzby', toSeller:true },
-  { id:'AF', name:'Balení',            price:1.90,  cat:'sluzby', toSeller:true },
-  { id:'AG', name:'Auto: počet stromů (B–S)', price:0, cat:'sluzby', isAG:true, readonly:true },
-
-  { id:'AH', name:'Akce',              price:12.90, cat:'akce' },
-  { id:'AI', name:'Treefood',          price:1.50,  cat:'treefood' }
+  // Akce + hnojivo
+  { id:'AH', name:'Akce',           price:12.90, cat:'akce' },
+  { id:'AI', name:'Treefood',       price:1.50,  cat:'treefood' }
 ];
 
-const tbody = document.getElementById('tbody');
-const todaySalesEl = document.getElementById('todaySales');
-const envelopeEl   = document.getElementById('envelope');
-const keepEl       = document.getElementById('sellerKeep');
-const cntStromyEl = document.getElementById('cntStromy');
-const cntKvetinaceEl = document.getElementById('cntKvetinace');
-const cntStojanyEl = document.getElementById('cntStojany');
-const cntSluzbyEl = document.getElementById('cntSluzby');
+/* ===== Stav & helpers ===== */
+const qty = Object.fromEntries(ITEMS.map(i=>[i.id,0]));
+const byId = Object.fromEntries(ITEMS.map(i=>[i.id,i]));
+const el = (sel)=>document.querySelector(sel);
+const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
+const fmtEur = (n)=> `${fmtNum(n)} Eur`;
+const isTree = (it)=> CATS.TREES.includes(it.cat);
+const trClass = (cat)=>({smrk:'row-smrk',borovice:'row-borovice',jedle:'row-jedle',kvetinac:'row-kvetinac',stojan:'row-stojan',haluzimelo:'row-haluzimelo',sluzby:'row-sluzby',akce:'row-akce',treefood:'row-treefood'})[cat]||'';
 
-const qty = {};     // id -> kusy
-let agQtySpan = null; // ukazatel na <span> s počtem AG
+let agQtySpan = null;
 
-function trClass(cat){
-  return ({
-    smrk:'row-smrk', borovice:'row-borovice', jedle:'row-jedle',
-    kvetinac:'row-kvetinac', stojan:'row-stojan',
-    haluzimelo:'row-haluzimelo', sluzby:'row-sluzby',
-    kusy:'row-kusy', akce:'row-akce', treefood:'row-treefood'
-  })[cat] || '';
-}
-
-function qtyControl(initial, onChange){
-  const wrap = document.createElement('div'); wrap.className='qtyctrl';
-  const minus = document.createElement('button'); minus.className='btn minus'; minus.type='button'; minus.textContent='−';
-  const inp = document.createElement('input'); inp.className='qty mono'; inp.type='text'; inp.value=initial; inp.inputMode='numeric';
-  const plus = document.createElement('button'); plus.className='btn plus'; plus.type='button'; plus.textContent='+';
-
-  minus.setAttribute('aria-label','Odebrat kus');
-  plus.setAttribute('aria-label','Přidat kus');
-  inp.setAttribute('title','Zadej počet kusů');
-
-  const clean=v=>Math.max(0,parseInt((v+'').replace(/[^\d]/g,''),10)||0);
-  const set=n=>{ inp.value=n; onChange(n); };
-
-  // ruční zadání
-  inp.addEventListener('input', ()=> set(clean(inp.value)));
-
-  // klik zneškodníme, navýšení řeší press&hold níže
-  plus.addEventListener('click',  e=> e.preventDefault());
-  minus.addEventListener('click', e=> e.preventDefault());
-
-  wrap.append(minus, inp, plus);
-  return wrap;
-}
-
-function addRow(parent, cells){
-  const tr=document.createElement('tr'); tr.innerHTML=cells; parent.appendChild(tr); return tr;
+/* ===== Render tabulky ===== */
+function addRow(parent, it){
+  const tr = document.createElement('tr');
+  tr.className = trClass(it.cat);
+  tr.dataset.id = it.id;
+  tr.innerHTML = `
+    <td class="col-id"><span class="rowid mono">${it.id}</span></td>
+    <td class="col-name">${it.name}</td>
+    <td class="col-price mono">${fmtNum(it.price)}</td>
+    <td class="col-qty" data-qty>
+      <div class="qtyctrl">
+        <button class="btn minus" type="button" aria-label="Odebrat kus">−</button>
+        <input class="qty mono" type="text" inputmode="numeric" value="0">
+        <button class="btn plus"  type="button" aria-label="Přidat kus">+</button>
+      </div>
+    </td>
+    <td class="col-sum mono" data-sum>${fmtNum(0)}</td>
+  `;
+  parent.appendChild(tr);
+  return tr;
 }
 
 function build(){
-  tbody.innerHTML='';
+  const tbody = el('#tbody');
+  tbody.innerHTML = '';
+
+  // render všech položek
   ITEMS.forEach(it=>{
-    qty[it.id]=0;
-    const tr = addRow(tbody, `
-      <td class="col-id"><span class="rowid mono">${it.id}</span></td>
-      <td class="col-name">${it.name}</td>
-      <td class="col-price mono">${fmtNum(it.price)}</td>
-      <td class="col-qty" data-qty></td>
-      <td class="col-sum mono" data-sum>${fmtNum(0)}</td>
-    `);
-    tr.className = trClass(it.cat);
-
-    const qtyCell = tr.querySelector('[data-qty]');
-    const sumCell = tr.querySelector('[data-sum]');
-
-    // AG: needitovatelný řádek
-    if (it.isAG) {
-      qtyCell.innerHTML = `<span class="mono" id="agQty">0</span>`;
-      agQtySpan = qtyCell.querySelector('#agQty');
-      // žádné markování uložené řádky pro AG
-      return;
+    const tr = addRow(tbody, it);
+    // po AF vložíme AG – auto řádek
+    if (it.id==='AF'){
+      const ag = document.createElement('tr');
+      ag.className = trClass('sluzby');
+      ag.dataset.id = 'AG';
+      ag.innerHTML = `
+        <td class="col-id"><span class="rowid mono">AG</span></td>
+        <td class="col-name">Auto: počet stromů (B–S)</td>
+        <td class="col-price mono">0,00</td>
+        <td class="col-qty"><span class="mono" id="agQty">0</span></td>
+        <td class="col-sum mono">0,00</td>`;
+      tbody.appendChild(ag);
+      agQtySpan = ag.querySelector('#agQty');
     }
-
-    const setSavedMark = (n)=>{
-      if(n>0) tr.classList.add('mark-saved');
-      else tr.classList.remove('mark-saved');
-    };
-
-    qtyCell.appendChild(qtyControl(0, n=>{
-      qty[it.id]=n;
-      sumCell.textContent = fmtNum(n*it.price);
-      setSavedMark(n);
-      recalc();
-    }));
-    setSavedMark(0);
-  });
-
-  // Klik na řádek jen zaostří input (bez vizuálního zvýraznění)
-  document.querySelectorAll('#tbody tr').forEach(tr=>{
-    tr.addEventListener('click',e=>{
-      if(e.target.closest('.btn') || e.target.closest('.qty')) return;
-      const inp=tr.querySelector('.qty'); if(inp){ inp.focus(); inp.select(); }
-    });
-  });
-
-  // Press & hold
-  const START=400, STEP=60, MIN=60;
-  function hold(btn, fn){
-    let t, d=START, down=false;
-    const start=(e)=>{
-      e.preventDefault();
-      if(down) return; down=true; fn(); d=START;
-      const loop=()=>{ if(!down) return; fn(); d=Math.max(MIN,d-STEP); t=setTimeout(loop,d); };
-      t=setTimeout(loop,d);
-    };
-    const stop=()=>{ down=false; clearTimeout(t); };
-    btn.addEventListener('pointerdown', start);
-    btn.addEventListener('pointerup', stop);
-    btn.addEventListener('pointerleave', stop);
-    btn.addEventListener('pointercancel', stop);
-  }
-  document.querySelectorAll('.qtyctrl').forEach(w=>{
-    const minus=w.querySelector('.btn.minus');
-    const plus =w.querySelector('.btn.plus');
-    const inp  =w.querySelector('.qty');
-    const clean=v=>Math.max(0,parseInt((v+'').replace(/[^\d]/g,''),10)||0);
-    hold(minus, ()=>{ const n=Math.max(0, clean(inp.value)-1); inp.value=n; inp.dispatchEvent(new Event('input')); });
-    hold(plus , ()=>{ const n=clean(inp.value)+1;               inp.value=n; inp.dispatchEvent(new Event('input')); });
   });
 }
 
+/* ===== Přepočet ===== */
 function recalc(){
-  let total = 0;
-
-  // KPI počty
-  let cStromy=0, cKv=0, cSt=0, cSvc=0;
-
-  // Jednotkové ceny potřebné pro služby/hnojivo
-  const AEP = (ITEMS.find(x=>x.id==='AE')||{}).price || 1.90;
-  const AFP = (ITEMS.find(x=>x.id==='AF')||{}).price || 1.90;
-
-  // 1) Auto-AG = počet stromů B–S (mimo AH)
-  let agCount = 0;
-  ITEMS.forEach(it=>{
-    if (['smrk','borovice','jedle'].includes(it.cat) && it.id!=='AH') {
-      agCount += (qty[it.id]||0);
-    }
-  });
-  qty['AG'] = agCount;
+  // AG = počet stromů (kategorie TREES)
+  const agCount = ITEMS.reduce((a,it)=> a + (isTree(it)? (qty[it.id]||0):0), 0);
   if (agQtySpan) agQtySpan.textContent = String(agCount);
 
-  // 2) Tržby (Dnešní prodej) – AG nepočítáme (price 0)
-  ITEMS.forEach(it=>{
-    const n   = qty[it.id]||0;
-    const sub = n * it.price;
+  // Tržby (AG neexistuje v ITEMS, takže se sem nikdy nezapočítá)
+  const total = ITEMS.reduce((sum,it)=> sum + (qty[it.id]||0)*it.price, 0);
 
-    if (!it.isAG) total += sub;
+  // Počty pro KPI
+  const cntStromy = ITEMS.reduce((a,it)=>
+    a + ((isTree(it) || it.id==='AH') ? (qty[it.id]||0) : 0)
+  , 0);
+  const cntKvetinace = ITEMS.reduce((a,it)=> a + (it.cat===CATS.KV? qty[it.id]||0 : 0), 0);
+  const cntStojany   = ITEMS.reduce((a,it)=> a + (it.cat===CATS.STAND? qty[it.id]||0 : 0), 0);
+  const cntSluzby    = ITEMS.reduce((a,it)=> a + (it.cat===CATS.SVC? qty[it.id]||0 : 0), 0);
 
-    if(['smrk','borovice','jedle'].includes(it.cat)) cStromy += n;
-    else if(it.cat==='kvetinac') cKv += n;
-    else if(it.cat==='stojan')   cSt += n;
-    else if(it.cat==='sluzby' && !it.isAG) cSvc += n;
-  });
+  // Provize prodejce
+  const svcFee   = (qty.AE||0)*byId.AE.price + (qty.AF||0)*byId.AF.price - agCount;
+  const stands   = cntStojany * FEE.stojan;
+  const fert     = (qty.AI||0) * FEE.hnojivo; // 0,3 €/ks
+  const haluzCnt = ITEMS.reduce((a,it)=> a + (it.cat===CATS.HALUZ? qty[it.id]||0 : 0), 0);
+  const haluz    = haluzCnt * FEE.haluz;      // 0,7 €/ks
 
-  // 3) Proměnné pro prodejce
-  // služby = AE + AF - AG_count
-  const svcFee = (qty['AE']||0)*AEP + (qty['AF']||0)*AFP - agCount;
-
-  // stojany = 1 € / ks
-  const standsFee = cSt * 1;
-
-  // hnojivo = 0,3 € / ks (AI)
-  const fertFee = (qty['AI']||0) * 0.3;
-
-  // haluze+imelo = 0,7 € / ks (AB, AC, AD)
-  let haluzUnits = 0;
-  ITEMS.forEach(it=>{
-    if (it.cat==='haluzimelo') haluzUnits += (qty[it.id]||0);
-  });
-  const haluzFee = 0.7 * haluzUnits;
-
-  // 4) Výsledky
-  const sellerKeep = svcFee + standsFee + fertFee + haluzFee;
+  const sellerKeep = svcFee + stands + fert + haluz;
   const envelope   = total - sellerKeep;
 
-  // 5) Zobrazení
-  todaySalesEl.textContent = fmtEur(total);
-  envelopeEl.textContent   = fmtEur(envelope);
-  keepEl.textContent       = fmtEur(sellerKeep);
+  // Zobrazení – sellerKeep maskujeme na min. 0 (jen vizuálně)
+  const sellerKeepDisplay = Math.max(0, sellerKeep);
 
-  cntStromyEl.textContent     = String(cStromy);
-  cntKvetinaceEl.textContent  = String(cKv);
-  cntStojanyEl.textContent    = String(cSt);
-  cntSluzbyEl.textContent     = String(cSvc);
+  el('#todaySales').textContent = fmtEur(total);
+  el('#sellerKeep').textContent = fmtEur(sellerKeepDisplay);
+  el('#envelope').textContent   = fmtEur(envelope);
+
+  el('#cntStromy').textContent     = String(cntStromy);
+  el('#cntKvetinace').textContent  = String(cntKvetinace);
+  el('#cntStojany').textContent    = String(cntStojany);
+  el('#cntSluzby').textContent     = String(cntSluzby);
+
+  // Součty v řádcích + mark-saved
+  document.querySelectorAll('#tbody tr').forEach(tr=>{
+    const id = tr.dataset.id;
+    const sumEl = tr.querySelector('[data-sum]');
+    const q = qty[id]||0;
+    if (sumEl && byId[id]) sumEl.textContent = fmtNum(q*byId[id].price);
+    if (byId[id]) tr.classList.toggle('mark-saved', q>0);
+  });
 }
 
+/* ===== Ovládání (delegace) ===== */
+function clampInt(v){ v = (v+'').replace(/[^\d]/g,''); return Math.max(0, parseInt(v||'0',10)); }
+
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const wrap = btn.closest('tr');
+  const id = wrap?.dataset.id; if (!id || !byId[id]) return;
+  const inp = wrap.querySelector('.qty');
+  const cur = clampInt(inp.value);
+  const next = btn.classList.contains('plus') ? cur+1 : Math.max(0, cur-1);
+  inp.value = String(next);
+  qty[id] = next;
+  recalc();
+});
+
+document.addEventListener('input', (e)=>{
+  if (!e.target.classList.contains('qty')) return;
+  const tr = e.target.closest('tr'); const id = tr?.dataset.id;
+  if (!id || !byId[id]) return;
+  e.target.value = (e.target.value+'').replace(/[^\d]/g,'').slice(0,5);
+  qty[id] = clampInt(e.target.value);
+  recalc();
+});
+
+document.getElementById('calcForm').addEventListener('reset', ()=>{
+  setTimeout(()=>{
+    Object.keys(qty).forEach(k=> qty[k]=0);
+    document.querySelectorAll('.qty').forEach(i=> i.value='0');
+    document.querySelectorAll('#tbody tr').forEach(tr=> tr.classList.remove('mark-saved'));
+    if (agQtySpan) agQtySpan.textContent = '0';
+    recalc();
+  },0);
+});
+
+/* ===== Init ===== */
 build();
 recalc();
-
-/* vstup: jen čísla + auto-select */
-document.addEventListener('input',e=>{
-  if(e.target && e.target.classList.contains('qty')){
-    e.target.value=(e.target.value+'').replace(/[^\d]/g,'').slice(0,5);
-  }
-});
-document.addEventListener('focusin',e=>{
-  if(e.target && e.target.classList.contains('qty')) e.target.select();
-});
-</script>
-
-<!-- ANTIBOT + RESET integrace -->
-<script>
-(function () {
-  const form = document.getElementById('calcForm');
-  if (!form) return;
-
-  // Zamknout interaktivní prvky (mimo reset)
-  const lockables = form.querySelectorAll('input, button, select');
-  lockables.forEach(el => { if (el.type !== 'reset') el.disabled = true; });
-
-  const honey = form.querySelector('input[name="website"]');
-  const startedAt = performance.now();
-  let interacted = false;
-  const minDelayMs = 800;
-
-  function humanSignal(){ interacted = true; maybeUnlock(); }
-  window.addEventListener('mousemove', humanSignal, {once:true, passive:true});
-  window.addEventListener('keydown',   humanSignal, {once:true});
-  window.addEventListener('touchstart', humanSignal, {once:true, passive:true});
-
-  function looksLikeBot(){ return !!navigator.webdriver; }
-
-  function maybeUnlock(){
-    if (looksLikeBot()) return;
-    if (honey && honey.value.trim() !== '') return;
-    const elapsed = performance.now() - startedAt;
-    if (elapsed < minDelayMs) return setTimeout(maybeUnlock, minDelayMs - elapsed);
-    if (!interacted) return;
-    lockables.forEach(el => { if (el.type !== 'reset') el.disabled = false; });
-  }
-  setTimeout(maybeUnlock, minDelayMs + 120);
-
-  // Debounce a přepočet
-  let t;
-  const debounce=(fn,ms)=>(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); };
-  const computeDebounced = debounce(()=>recalc(), 120);
-  form.addEventListener('input', computeDebounced, {passive:true});
-  form.addEventListener('change', computeDebounced);
-
-  // Reset: vynuluj stavy
-  form.addEventListener('reset', () => {
-    setTimeout(() => {
-      Object.keys(qty).forEach(k => qty[k]=0);
-      document.querySelectorAll('#tbody [data-sum]').forEach(el => el.textContent = (0).toFixed(2).replace('.',','));
-      document.querySelectorAll('#tbody .qty').forEach(el => el.value = '0');
-      document.querySelectorAll('#tbody tr').forEach(tr => tr.classList.remove('mark-saved'));
-      if (typeof agQtySpan!=='undefined' && agQtySpan) agQtySpan.textContent = '0';
-      recalc();
-    }, 0);
-  });
-})();
 </script>
 </body>
 </html>
