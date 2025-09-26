@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Výpočet prodeje – vánoční stromky</title>
+<style>
+  :root{
+    --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
+    --card:#0a1c14; --line:#133322;
+    --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
+
+    /* Výrazné barvy kategorií (světlé pozadí pro celé řádky) */
+    --smrk:#e6f5e9;        /* Smrk */
+    --borovice:#e0f2e6;    /* Borovice */
+    --jedle:#dff6ea;       /* Jedle */
+    --kvetinac:#e6f1fb;    /* Květ/Květináč */
+    --stojan:#eef1f4;      /* Stojan */
+    --haluzimelo:#fff8d9;  /* Haluz + Imelo */
+    --sluzby:#efe5da;      /* Balení + Frézování (služby prodejce) */
+    --kusy:#ffe9d6;        /* Kusy (oranž.) */
+    --akce: var(--jedle);  /* Akce = jako Jedle */
+    --treefood:#efe6ff;    /* Treefood (hnojivo) */
+    --text-dark:#0b1a12;   /* tmavý text pro světlé řádky */
+  }
+
+  /* zvýraznění CELÉHO řádku při hover/focus */
+  .table tbody tr:hover td,
+  .table tbody tr:focus-within td {
+    background: #29c374 !important; /* akcent zelená */
+    color: #fff !important;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
+  h1{margin:0 0 12px;font-size:1.6rem}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+
+  /* KPIs nahoře */
+  .kpis{display:grid;gap:8px}
+  @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  .kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
+  .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
+  .kpi .v{font-size:1.35rem;font-weight:900}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+
+  /* Tabulka */
+  .table{width:100%;border-collapse:collapse;table-layout:fixed}
+  .table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
+  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
+  .table th:first-child,.table td:first-child{text-align:left}
+
+  /* šířky sloupců (100 % celá tabulka) */
+  .col-id{width:10%}
+  .col-name{width:auto}       /* vyplní zbytek */
+  .col-price{width:15%}
+  .col-qty{width:20%}
+  .col-sum{width:20%}
+
+  /* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
+  .table tbody td{color:var(--text-dark)}
+  .table tbody td.mono{color:var(--text-dark)}
+
+  .rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
+
+  /* Barvy CELÝCH řádků dle kategorie */
+  tr.row-smrk td{background:var(--smrk)}
+  tr.row-borovice td{background:var(--borovice)}
+  tr.row-jedle td{background:var(--jedle)}
+  tr.row-kvetinac td{background:var(--kvetinac)}
+  tr.row-stojan td{background:var(--stojan)}
+  tr.row-haluzimelo td{background:var(--haluzimelo)}
+  tr.row-sluzby td{background:var(--sluzby)}
+  tr.row-kusy td{background:var(--kusy)}
+  tr.row-akce td{background:var(--akce)}
+  tr.row-treefood td{background:var(--treefood)}
+
+  /* Ovládání kusů */
+  .qtyctrl{display:inline-grid;grid-template-columns:40px 70px 40px;gap:6px;align-items:center;justify-items:center}
+  .btn{width:100%;height:36px;border:1px solid var(--line);background:var(--btn);color:var(--text);border-radius:10px;font-size:1.1rem;font-weight:800;cursor:pointer}
+  .btn.plus{background:linear-gradient(0deg, var(--btn-accent-2), var(--btn-accent))}
+  .btn.minus{background:#163a28}
+  .btn:active{transform:scale(.98)}
+  .qty{width:100%;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;height:36px;font-weight:800}
+
+  .section-title{margin:0 0 8px;font-size:1.1rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Dnešní prodej</h1>
+
+  <!-- SOUHRN NAHOŘE -->
+  <div class="card">
+    <div class="kpis">
+      <div class="kpi">
+        <h3>Dnešní prodej</h3>
+        <div class="v mono" id="todaySales">0,00 Eur</div>
+      </div>
+      <div class="kpi">
+        <h3>Odevzdat do obálky</h3>
+        <div class="v mono" id="envelope">0,00 Eur</div>
+      </div>
+      <div class="kpi">
+        <h3>Co zůstává dnes prodejci</h3>
+        <div class="v mono" id="sellerKeep">0,00 Eur</div>
+      </div>
+
+      <div class="kpi">
+        <h3>Počet prodaných stromů</h3>
+        <div class="v mono" id="cntStromy">0</div>
+      </div>
+      <div class="kpi">
+        <h3>Počet prodaných květináčů</h3>
+        <div class="v mono" id="cntKvetinace">0</div>
+      </div>
+      <div class="kpi">
+        <h3>Počet prodaných stojanů</h3>
+        <div class="v mono" id="cntStojany">0</div>
+      </div>
+      <div class="kpi">
+        <h3>Počet prodaných služeb</h3>
+        <div class="v mono" id="cntSluzby">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABULKA B…AI -->
+  <div class="card">
+    <div class="section-title">Seznam položek (B…AI)</div>
+    <table class="table" id="tbl">
+      <thead>
+        <tr>
+          <th class="col-id">ID</th>
+          <th class="col-name">Název</th>
+          <th class="col-price">Cena za kus (Eur)</th>
+          <th class="col-qty">Prodané kusy</th>
+          <th class="col-sum">Celková suma (Eur)</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ====== POMOCNÉ FORMÁTOVÁNÍ (cs-CZ) ====== */
+const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
+const fmtEur = (n)=> \`\${fmtNum(n)} Eur\`;
+
+/* ===========================================================
+   CONFIG – ceník a klasifikace
+   - Služby: Frézování (AE) + Síto/Balení (AF) – obě jdou prodejci
+   - Doplňek (ne služba): Treefood (AI)
+   =========================================================== */
+const ITEMS = [
+  /* Stromy */
+  { id:'B',  name:'Smrek B',             price:23.60, cat:'smrk' },
+  { id:'C',  name:'Smrek C',             price:39.90, cat:'smrk' },
+
+  { id:'D',  name:'Borovice D',          price:29.90, cat:'borovice' },
+  { id:'E',  name:'Borovice E',          price:39.90, cat:'borovice' },
+  { id:'F',  name:'Borovice F',          price:49.90, cat:'borovice' },
+  { id:'G',  name:'Borovice G',          price:59.90, cat:'borovice' },
+
+  { id:'H',  name:'Jedľa Akcia H',       price:16.50, cat:'jedle' },
+  { id:'I',  name:'Jedľa Akcia I',       price:23.30, cat:'jedle' },
+  { id:'J',  name:'Jedľa Akcia J',       price:29.90, cat:'jedle' },
+  { id:'K',  name:'Jedľa Akcia K',       price:36.40, cat:'jedle' },
+  { id:'L',  name:'Jedľa Akcia L',       price:43.40, cat:'jedle' },
+  { id:'M',  name:'Jedľa Nordmann M',    price:49.90, cat:'jedle' },
+  { id:'N',  name:'Jedľa Nordmann N',    price:59.90, cat:'jedle' },
+  { id:'O',  name:'Jedľa Premium O',     price:71.50, cat:'jedle' },
+  { id:'P',  name:'Jedľa Premium P',     price:85.50, cat:'jedle' },
+  { id:'Q',  name:'Jedľa Premium Q',     price:99.50, cat:'jedle' },
+  { id:'R',  name:'Jedľa Premium R',     price:135.00, cat:'jedle' },
+  { id:'S',  name:'Jedľa Premium S',     price:165.00, cat:'jedle' },
+
+  /* Květ / Květináče */
+  { id:'T',  name:'Květ T',              price:36.40, cat:'kvetinac' },
+  { id:'Z',  name:'Kvetináč Z',          price:43.40, cat:'kvetinac' },
+  { id:'AA', name:'Kvetináč AA',         price:49.90, cat:'kvetinac' },
+
+  /* Stojany */
+  { id:'U',  name:'Stojan U',            price:34.00, cat:'stojan' },
+  { id:'V',  name:'Stojan V',            price:46.00, cat:'stojan' },
+  { id:'W',  name:'Stojan W',            price:52.00, cat:'stojan' },
+  { id:'X',  name:'Stojan X',            price:65.00, cat:'stojan' },
+  { id:'Y',  name:'Stojan Y',            price:83.00, cat:'stojan' },
+
+  /* Doplňky + služby uvnitř B..AI */
+  { id:'AB', name:'Haluz AB',            price:3.90,  cat:'haluzimelo' },
+  { id:'AC', name:'Haluz AC',            price:4.90,  cat:'haluzimelo' },
+  { id:'AD', name:'Imelo AD',            price:2.90,  cat:'haluzimelo' },
+
+  /* SLUŽBY: Frézování + Balení/Síto (obojí jde prodejci) */
+  { id:'AE', name:'Frézování AE',        price:1.90,  cat:'sluzby', toSeller:true },
+  { id:'AF', name:'Síto (balení) AF',    price:1.90,  cat:'sluzby', toSeller:true },
+
+  { id:'AG', name:'Kusy AG',             price:1.90,  cat:'kusy' },
+  { id:'AH', name:'Akce AH',             price:12.90, cat:'akce' },
+  { id:'AI', name:'Treefood (hnojivo) AI', price:1.50, cat:'treefood' }  /* doplněk, NE služba */
+];
+
+/* ======== UI ======== */
+const tbody = document.getElementById('tbody');
+
+const todaySalesEl = document.getElementById('todaySales');
+const envelopeEl   = document.getElementById('envelope');
+const keepEl       = document.getElementById('sellerKeep');
+
+const cntStromyEl    = document.getElementById('cntStromy');
+const cntKvetinaceEl = document.getElementById('cntKvetinace');
+const cntStojanyEl   = document.getElementById('cntStojany');
+const cntSluzbyEl    = document.getElementById('cntSluzby');
+
+const qty = {};     // id -> kusy (B..AI)
+
+function trClass(cat){
+  return ({
+    smrk:'row-smrk',
+    borovice:'row-borovice',
+    jedle:'row-jedle',
+    kvetinac:'row-kvetinac',
+    stojan:'row-stojan',
+    haluzimelo:'row-haluzimelo',
+    sluzby:'row-sluzby',
+    kusy:'row-kusy',
+    akce:'row-akce',
+    treefood:'row-treefood'
+  })[cat] || '';
+}
+
+/* Ovládání počtu kusů s + / - a ručním vstupem (jen čísla, >= 0) */
+function qtyControl(initial, onChange){
+  const wrap = document.createElement('div');
+  wrap.className = 'qtyctrl';
+  const minus = document.createElement('button'); minus.className='btn minus'; minus.textContent='−';
+  const inp = document.createElement('input'); inp.className='qty mono'; inp.type='text'; inp.value=initial; inp.inputMode='numeric';
+  const plus = document.createElement('button'); plus.className='btn plus'; plus.textContent='+';
+
+  function clean(v){ v=(v+'').replace(/[^\d]/g,''); return Math.max(0, parseInt(v||'0',10)); }
+  function set(n){ inp.value=n; onChange(n); }
+
+  minus.onclick=()=> set(Math.max(0, clean(inp.value)-1));
+  plus.onclick =()=> set(clean(inp.value)+1);
+  inp.addEventListener('input', ()=> set(clean(inp.value)));
+  wrap.append(minus, inp, plus);
+  return wrap;
+}
+
+function addRow(parent, cells){
+  const tr=document.createElement('tr');
+  tr.innerHTML=cells;
+  parent.appendChild(tr);
+  return tr;
+}
+
+function build(){
+  tbody.innerHTML = '';
+  ITEMS.forEach(it=>{
+    qty[it.id]=0;
+    const tr = addRow(tbody, `
+      <td class="col-id"><span class="rowid mono">${it.id}</span></td>
+      <td class="col-name">${it.name}</td>
+      <td class="col-price mono">${fmtEur(it.price)}</td>
+      <td class="col-qty" data-qty></td>
+      <td class="col-sum mono" data-sum>${fmtEur(0)}</td>
+    `);
+    tr.className = trClass(it.cat);
+
+    const qtyCell = tr.querySelector('[data-qty]');
+    const sumCell = tr.querySelector('[data-sum]');
+    qtyCell.appendChild(qtyControl(0, n=>{
+      qty[it.id]=n;
+      sumCell.textContent = fmtEur(n*it.price);
+      recalc();
+    }));
+  });
+}
+
+function recalc(){
+  let total=0, owner=0, seller=0;
+  let cStromy=0, cKv=0, cSt=0, cSvc=0;
+
+  ITEMS.forEach(it=>{
+    const n = qty[it.id]||0;
+    const sub = n * it.price;
+    total += sub;
+
+    if(it.toSeller){ seller += sub; cSvc += n; } else { owner += sub; }
+
+    if (['smrk','borovice','jedle'].includes(it.cat)) cStromy += n;
+    else if (it.cat==='kvetinac') cKv += n;
+    else if (it.cat==='stojan')   cSt += n;
+  });
+
+  todaySalesEl.textContent = fmtEur(total);
+  envelopeEl.textContent   = fmtEur(owner);
+  keepEl.textContent       = fmtEur(seller);
+
+  cntStromyEl.textContent    = String(cStromy);
+  cntKvetinaceEl.textContent = String(cKv);
+  cntStojanyEl.textContent   = String(cSt);
+  cntSluzbyEl.textContent    = String(cSvc);
+}
+
+build();
+recalc();
+</script>
+</body>
+</html>
