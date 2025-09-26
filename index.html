@@ -206,6 +206,20 @@
 .table tbody tr:has(.qty:focus) td{
   outline:2px solid var(--btn-accent-2); outline-offset:-2px;
 }
+/* větší (neviditelná) dotyková plocha tlačítek a zákaz označování */
+.qtyctrl .btn{ position:relative; user-select:none; -webkit-user-select:none; }
+.qtyctrl .btn::before{ content:""; position:absolute; inset:-6px; }
+@media (max-width:640px){
+  .qtyctrl .qty{ font-size:16px; } /* místo 0.95rem */
+}
+// klik na řádek => focus do jeho inputu
+document.querySelectorAll('#tbody tr').forEach(tr=>{
+  tr.addEventListener('click',e=>{
+    if(e.target.closest('.btn') || e.target.closest('.qty')) return;
+    const inp = tr.querySelector('.qty');
+    if(inp){ inp.focus(); inp.select(); }
+  });
+});
 
 </style>
 </head>
@@ -447,5 +461,6 @@ document.querySelectorAll('.qty').forEach(inp=>{
 </script>
 </body>
 </html>
+
 
 
