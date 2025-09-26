@@ -5,102 +5,110 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Výpočet prodeje – vánoční stromky</title>
 <style>
-:root{
-  --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
-  --card:#0a1c14; --line:#133322;
-  --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
-  --btn-plus:#1fb56a; --btn-minus:#10281d;
-}
-*{box-sizing:border-box}
-html,body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif; margin:0}
+  :root{
+    --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
+    --card:#0a1c14; --line:#133322;
+    --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
 
-/* ---- KARTY (souhrn nahoře) – vzhled jako dřív ---- */
-.card{background:var(--card); border-radius:14px; padding:1rem; margin:1rem;}
-.grid-cards{display:grid; gap:12px; grid-template-columns:repeat(3,1fr);}
-.stat{background:#0d261b; border-radius:12px; padding:.9rem 1rem;}
-.stat h3{margin:0 0 .25rem; font-size:1rem; color:var(--muted); font-weight:600;}
-.stat .val{margin:0; font-weight:800; font-size:1.35rem}
-
-/* ---- TABULKA – původní desktop layout ---- */
-.table-wrap{overflow-x:auto;}
-.items-table{display:grid; grid-template-columns:10% 1fr 15% 20% 20%; border-radius:12px; overflow:hidden;}
-.items-table .row{display:contents;}
-.cell{padding:10px 10px; border-top:1px solid var(--line);}
-.head{font-weight:800; background:#123123;}
-.cell.id{text-align:center;}
-.cell.name{text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.cell.price,.cell.qty{text-align:center; white-space:nowrap;}
-.cell.total{text-align:left; white-space:nowrap}
-
-/* FULL-ROW BARVENÍ (jako na 1. screenu) */
-.row.smrk  .cell{background:#e6f5e914;}
-.row.bor   .cell{background:#e0f2e614;}
-.row.jedle .cell{background:#dff6ea14;}
-.row.kvet  .cell{background:#e6f1fb14;}
-
-/* ---- Ovládání množství – vzhled + / − jako na 1. screenu ---- */
-.qty-controls{display:inline-flex; align-items:center; gap:.45rem;}
-.qty-controls .btn{
-  width:38px; height:38px; border:0; border-radius:12px;
-  color:#fff; font-size:1.05rem; font-weight:800; display:inline-grid; place-items:center;
-}
-.qty-controls .btn.minus{background:var(--btn-minus);}
-.qty-controls .btn.plus{background:var(--btn-plus);}
-.qty-controls .btn:active{transform:translateY(1px)}
-.qty-controls input[type="number"]{
-  width:78px; padding:.4rem .5rem; text-align:center;
-  border-radius:10px; border:1px solid var(--line); background:#fff; color:#111; font-weight:700;
-  -moz-appearance:textfield;
-}
-.qty-controls input[type=number]::-webkit-outer-spin-button,
-.qty-controls input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
-
-/* ---- Skrytí “Eur” v řádcích; v hlavičce zůstává ---- */
-.row .eur, .row .unit, .row .sub{display:none !important;}
-
-/* ---- RESPONSIVE – jen zmenšujeme, nic nepřekreslujeme ---- */
-/* větší tablety – lehké zúžení číselných sloupců */
-@media (max-width: 1200px){
-  .items-table{grid-template-columns:9% 1fr 14% 18.5% 18.5%;}
-}
-
-/* tablety/menší laptopy */
-@media (max-width: 992px){
-  .grid-cards{grid-template-columns:repeat(2,1fr);}
-  .items-table{grid-template-columns:8.5% 1fr 14% 18% 18%;}
-  .cell{padding:9px 8px;}
-  .qty-controls .btn{width:36px; height:36px; border-radius:11px;}
-  .qty-controls input[type="number"]{width:72px;}
-}
-
-/* telefony – stále JEDEN ŘÁDEK, priorita pro název; kompaktnější +/−/input */
-@media (max-width: 640px){
-  .grid-cards{grid-template-columns:1fr;}
-  .items-table{
-    grid-template-columns:
-      minmax(2.6ch,8.2%)     /* ID – nejmenší, ale čitelné */
-      minmax(130px,1fr)      /* Název – bere zbytek */
-      minmax(7ch,14.2%)      /* Cena */
-      minmax(8.6ch,17.5%)    /* Kusy (ovládání) */
-      minmax(8.6ch,18.5%);   /* Suma */
+    /* Výrazné barvy kategorií (světlé pozadí pro celé řádky) */
+    --smrk:#e6f5e9;        /* Smrk */
+    --borovice:#e0f2e6;    /* Borovice */
+    --jedle:#dff6ea;       /* Jedle */
+    --kvetinac:#e6f1fb;    /* Květ/Květináč */
+    --stojan:#eef1f4;      /* Stojan */
+    --haluzimelo:#fff8d9;  /* Haluz + Imelo */
+    --sluzby:#efe5da;      /* Balení + Frézování (služby prodejce) */
+    --kusy:#ffe9d6;        /* Kusy (oranž.) */
+    --akce: var(--jedle);  /* Akce = jako Jedle */
+    --treefood:#efe6ff;    /* Treefood (hnojivo) */
+    --text-dark:#0b1a12;   /* tmavý text pro světlé řádky */
   }
-  .cell{padding:8px 6px; font-size:.95rem;}
-  .qty-controls{gap:.32rem;}
-  .qty-controls .btn{width:30px; height:30px; border-radius:9px; font-size:1rem;}
-  .qty-controls input[type="number"]{width:56px; font-size:.95rem;}
-}
 
-/* extra úzké telefony – raději dovol horizontální posuv než lámat řádky */
-@media (max-width: 360px){
-  .items-table{min-width:340px;}
-}
+  /* zvýraznění CELÉHO řádku při hover/focus */
+  .table tbody tr:hover td,
+  .table tbody tr:focus-within td {
+    background: #29c374 !important; /* akcent zelená */
+    color: #fff !important;
+  }
 
-/* Focus highlight jako dřív */
-.row:has(.qty-controls input:focus) .cell{outline:2px solid var(--btn-accent-2); outline-offset:-2px;}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
+  h1{margin:0 0 12px;font-size:1.6rem}
+  .muted{color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
 
+  /* KPIs nahoře */
+  .kpis{display:grid;gap:8px}
+  @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  .kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
+  .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
+  .kpi .v{font-size:1.35rem;font-weight:900}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+
+  /* Tabulka */
+  .table{width:100%;border-collapse:collapse;table-layout:fixed}
+  .table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
+  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
+  .table th:first-child,.table td:first-child{text-align:left}
+
+  /* šířky sloupců (100 % celá tabulka) – DESKTOP/TABLET */
+  .col-id{width:10%}
+  .col-name{width:auto}       /* vyplní zbytek */
+  .col-price{width:15%}
+  .col-qty{width:20%}
+  .col-sum{width:20%}
+
+  /* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
+  .table tbody td{color:var(--text-dark)}
+  .table tbody td.mono{color:var(--text-dark)}
+
+  .rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
+
+  /* Barvy CELÝCH řádků dle kategorie */
+  tr.row-smrk td{background:var(--smrk)}
+  tr.row-borovice td{background:var(--borovice)}
+  tr.row-jedle td{background:var(--jedle)}
+  tr.row-kvetinac td{background:var(--kvetinac)}
+  tr.row-stojan td{background:var(--stojan)}
+  tr.row-haluzimelo td{background:var(--haluzimelo)}
+  tr.row-sluzby td{background:var(--sluzby)}
+  tr.row-kusy td{background:var(--kusy)}
+  tr.row-akce td{background:var(--akce)}
+  tr.row-treefood td{background:var(--treefood)}
+
+  /* Ovládání kusů */
+  .qtyctrl{display:inline-grid;grid-template-columns:40px 70px 40px;gap:6px;align-items:center;justify-items:center}
+  .btn{width:100%;height:36px;border:1px solid var(--line);background:var(--btn);color:var(--text);border-radius:10px;font-size:1.1rem;font-weight:800;cursor:pointer}
+  .btn.plus{background:linear-gradient(0deg, var(--btn-accent-2), var(--btn-accent))}
+  .btn.minus{background:#163a28}
+  .btn:active{transform:scale(.98)}
+  .qty{width:100%;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;height:36px;font-weight:800}
+
+  .section-title{margin:0 0 8px;font-size:1.1rem}
+
+  /* ========= RESPONSIVE: mobil (vše zůstává v JEDNOM řádku) ========= */
+  @media (max-width: 640px){
+    /* zmenšíme ID / CENA / SUMA, dáme víc místa názvu */
+    .col-id   { width: 8.5%; }
+    .col-price{ width: 14.5%; }
+    .col-qty  { width: 18%; }
+    .col-sum  { width: 18.5%; }
+
+    .table th,.table td{ padding:8px 6px; font-size:.95rem; }
+    .qtyctrl{ grid-template-columns:30px 56px 30px; gap:.32rem; }
+    .btn{ height:30px; border-radius:9px; font-size:1rem; }
+    .qty{ height:30px; font-size:.95rem; }
+    /* dlouhé názvy zkrátíme …, ale držíme jeden řádek */
+    .col-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  }
+
+  /* extra úzké telefony – raději povolit vodorovný posuv než lámat řádky */
+  @media (max-width: 360px){
+    .table{ min-width: 340px; }
+  }
 </style>
-
-
 </head>
 <body>
 <div class="wrap">
@@ -162,7 +170,7 @@ html,body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-
 <script>
 /* ====== POMOCNÉ FORMÁTOVÁNÍ (cs-CZ) ====== */
 const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtEur = (n)=> `${fmtNum(n)} Eur`;   // používá se jen v KPI a souhrnech
+const fmtEur = (n)=> `${fmtNum(n)} Eur`;
 
 /* ===========================================================
    CONFIG – ceník a klasifikace
@@ -279,8 +287,10 @@ function build(){
     const tr = addRow(tbody, `
       <td class="col-id"><span class="rowid mono">${it.id}</span></td>
       <td class="col-name">${it.name}</td>
+      <!-- ZMĚNA: v řádku už NENÍ „Eur“, jen číslo -->
       <td class="col-price mono">${fmtNum(it.price)}</td>
       <td class="col-qty" data-qty></td>
+      <!-- ZMĚNA: v řádku už NENÍ „Eur“, jen číslo -->
       <td class="col-sum mono" data-sum>${fmtNum(0)}</td>
     `);
     tr.className = trClass(it.cat);
@@ -289,7 +299,7 @@ function build(){
     const sumCell = tr.querySelector('[data-sum]');
     qtyCell.appendChild(qtyControl(0, n=>{
       qty[it.id]=n;
-      sumCell.textContent = fmtNum(n*it.price);   // << bez "Eur" v řádku
+      sumCell.textContent = fmtNum(n*it.price);  // ZMĚNA: bez „Eur“
       recalc();
     }));
   });
@@ -311,6 +321,7 @@ function recalc(){
     else if (it.cat==='stojan')   cSt += n;
   });
 
+  /* KPIs necháváme s jednotkou „Eur“ */
   todaySalesEl.textContent = fmtEur(total);
   envelopeEl.textContent   = fmtEur(owner);
   keepEl.textContent       = fmtEur(seller);
@@ -326,6 +337,3 @@ recalc();
 </script>
 </body>
 </html>
-
-
-
