@@ -12,31 +12,38 @@
   --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
 
   /* barvy poli textu */
-  --smrk:#e6f5e9;        /* Smrk */
-  --borovice:#dff6ea;    /* Borovice */
-  --jedle:#90EE90;       /* Jedle */
-  --kvetinac:#FFE4B5;    /* Květináč */
-  --stojan:#eef1f4;      /* Stojan */
-  --haluzimelo:#fff8d9;  /* Haluz + Imelo */
-  --sluzby:#efe5da;      /* Balení + Frézování */
-  --kusy:#ffe9d6;        /* Kusy (oranž.) */
-  --akce: var(--jedle);  /* Akce Jedle */
-  --treefood:#efe6ff;    /* Treefood (hnojivo) */
-  --text-dark:#0b1a12;   /* tmavý text pro světlé řádky */
+  --smrk:#e6f5e9;
+  --borovice:#dff6ea;
+  --jedle:#C1FFC1;
+  --kvetinac:#FFE4B5;
+  --stojan:#eef1f4;
+  --haluzimelo:#fff8d9;
+  --sluzby:#efe5da;
+  --kusy:#ffe9d6;
+  --akce: var(--jedle);
+  --treefood:#efe6ff;
+  --text-dark:#0b1a12;
 
-  /* Markery řádků */
+  /* označení řádku po změně */
   --mark-saved-bg:#FF6347;
-  --mark-active-bg:#66CDAA;
 }
 
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
 .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
-h1{margin:0 0 12px;font-size:1.6rem}
+h1{margin:0;font-size:1.6rem}
 .muted{color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
 
-/* KPIs nahoře */
+/* Horní lišta s nadpisem a resetem */
+.topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.reset-btn{
+  padding:10px 14px; border-radius:12px; border:1px solid var(--line);
+  background:#163a28; color:#e8f5ee; font-weight:700; cursor:pointer;
+}
+.reset-btn:active{ transform:scale(.98) }
+
+/* KPIs */
 .kpis{display:grid;gap:8px}
 @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
@@ -45,30 +52,36 @@ h1{margin:0 0 12px;font-size:1.6rem}
 .kpi .v{font-size:1.35rem;font-weight:900}
 .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
 
+/* Obal tabulky */
+.table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px}
+
 /* Tabulka */
-.table{width:100%;border-collapse:collapse;table-layout:fixed}
-.table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
+.table{width:100%;border-collapse:collapse;table-layout:fixed; min-width:720px;}
+.table thead th{position:sticky;top:0;background:var(--card);z-index:2;color:var(--text)}
 .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
 
-/* per-column alignment */
+/* zarovnání sloupců */
 th.col-id,   td.col-id   { text-align:center; }
 th.col-name, td.col-name { text-align:left; }
 th.col-price,td.col-price{ text-align:center; }
 th.col-qty,  td.col-qty  { text-align:center; }
 th.col-sum,  td.col-sum  { text-align:center; }
 
-/* šířky sloupců (100 % celá tabulka) – DESKTOP/TABLET */
+/* šířky */
 .col-id{width:10%}
 .col-name{width:auto}
 .col-price{width:15%}
 .col-qty{width:20%}
 .col-sum{width:20%}
 
-/* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
+/* tmavý text v těle tabulky */
 .table tbody td{color:var(--text-dark)}
 .table tbody td.mono{color:var(--text-dark)}
 
-.rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
+.rowid{
+  display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;
+  padding:2px 8px;border-radius:999px;margin-right:10px;
+}
 
 /* Barvy CELÝCH řádků dle kategorie */
 tr.row-smrk td{background:var(--smrk)}
@@ -86,17 +99,14 @@ tr.row-treefood td{background:var(--treefood)}
 .qtyctrl{
   display:grid;
   grid-template-columns: var(--qty-btn) minmax(44px, 1fr) var(--qty-btn);
-  gap:.35rem;
-  align-items:center;
-  justify-items:center;
-  width:100%;
-  max-width: clamp(140px, 32vw, 220px);
+  gap:.35rem; align-items:center; justify-items:center;
+  width:100%; max-width: clamp(140px, 32vw, 220px);
 }
 :root{ --qty-btn: 38px; }
 .qtyctrl .btn{
   width:var(--qty-btn); height:var(--qty-btn);
   border:1px solid var(--line); background:var(--btn);
-  color:var(--text); border-radius:12px; font-size:1.05rem;
+  color:#e8f5ee; border-radius:12px; font-size:1.05rem;
   font-weight:800; cursor:pointer; position:relative;
   user-select:none; -webkit-user-select:none;
 }
@@ -113,72 +123,83 @@ tr.row-treefood td{background:var(--treefood)}
 
 .section-title{margin:0 0 8px;font-size:1.1rem}
 
-/* Hover celé řádky – jen pro prázdné */
-.table tbody tr:not(.mark-active):not(.mark-saved):hover td,
-.table tbody tr:not(.mark-active):not(.mark-saved):focus-within td {
-  background:#29c374 !important;
-  color:#fff !important;
+/* === JEN HOVER + uloženo === */
+.table tbody tr:not(.mark-saved):hover td{
+  background:#29c374 !important; color:#fff !important;
 }
-.table tbody tr:hover input,
-.table tbody tr:focus-within input {
-  background:#f2f7f4 !important; color:#111 !important;
+.table tbody tr:focus td,
+.table tbody tr:active td,
+.table tbody tr:focus-within td,
+.table tbody td:focus,
+.table tbody td:active{
+  background:inherit !important; color:inherit !important;
 }
-
-/* Markery uložených/aktivních řádků */
 .table tbody tr.mark-saved td{
-  background: var(--mark-saved-bg) !important;
-  color: var(--text-dark) !important;
+  background:var(--mark-saved-bg) !important; color:var(--text-dark) !important;
 }
-.table tbody tr.mark-active td{
-  background: var(--mark-active-bg) !important;
-  color: var(--text-dark) !important;
-}
-.table tbody tr.mark-saved.mark-active td{
-  background: var(--mark-active-bg) !important;
+.table tbody tr.mark-saved:hover td{
+  background:var(--mark-saved-bg) !important; color:var(--text-dark) !important;
 }
 
 /* Sticky hlavička */
 .table thead th{
   background: linear-gradient(#0a1c14,#0a1c14);
   box-shadow: 0 1px 0 var(--line);
-  z-index: 2;
+  z-index: 3;
 }
 
-/* RESPONSIVE: mobil */
+/* === RESPONSIVE: mobil === */
 @media (max-width:640px){
-  .col-id{width:8%}
-  .col-price{width:14%}
-  .col-qty{width:17%}
-  .col-sum{width:18%}
-  .table th,.table td{padding:8px 6px;font-size:.95rem}
-  .col-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  :root{--qty-btn:28px}
+  .rowid{padding:1px 7px; font-size:.95rem; margin-right:8px}
+  :root{--qty-btn:32px}
   .qtyctrl{gap:.28rem;max-width:clamp(120px,38vw,170px)}
   .qtyctrl .btn{border-radius:9px;font-size:.95rem}
   .qtyctrl .qty{font-size:16px}
-  /* Zkrácené popisky hlaviček */
+
+  .col-id{width:9%}
+  .col-price{width:14%}
+  .col-qty{width:18%}
+  .col-sum{width:18%}
+  .col-name{width:auto}
+
+  th.col-qty, td.col-qty{ position:sticky; right:0; z-index:4; }
+  td.col-qty{ box-shadow: -6px 0 8px rgba(0,0,0,.18) }
+
   th.col-price::after { content:"Cena/ks"; }
   th.col-sum::after   { content:"Suma"; }
-  th.col-price, th.col-sum { color:transparent; position:relative; }
-  th.col-price::after, th.col-sum::after{
-    color:var(--text); position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:flex-end; padding:0 6px;
+  th.col-qty::after   { content:"Prod."; }
+  th.col-price, th.col-sum, th.col-qty{
+    color:transparent; position:relative; overflow:hidden;
   }
+  th.col-price::after, th.col-sum::after, th.col-qty::after{
+    color:var(--text); position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center; padding:0 6px;
+  }
+
+  .table{ min-width: 680px; }
 }
 
-/* Extra úzké telefony – raději horizontální posuv */
+/* Extra úzké telefony */
 @media (max-width:360px){
-  .table{ min-width:340px; }
+  .table{ min-width:640px; }
 }
 
 /* honeypot skrytí */
 .hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
+
+/* AG kvóta */
+#agQty{ display:inline-block; min-width:2ch; text-align:center; }
 </style>
 
 </head>
 <body>
 <div class="wrap">
-  <h1>Dnešní prodej</h1>
+
+  <!-- Horní lišta: nadpis + Reset (váže se na #calcForm) -->
+  <div class="topbar">
+    <h1>Dnešní prodej</h1>
+    <button type="reset" form="calcForm" class="reset-btn" aria-label="Vynulovat formulář">Reset</button>
+  </div>
 
   <div class="card">
     <div class="kpis">
@@ -205,30 +226,26 @@ tr.row-treefood td{background:var(--treefood)}
         </label>
       </div>
 
-      <table class="table" id="tbl">
-        <thead>
-          <tr>
-            <th class="col-id">ID</th>
-            <th class="col-name">Název</th>
-            <th class="col-price">Cena(Eur)</th>
-            <th class="col-qty">Prodané</th>
-            <th class="col-sum">Celkem(Eur)</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-
-      <div style="margin-top:12px; display:flex; gap:8px;">
-        <button type="reset" class="btn" style="padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:#163a28;color:var(--text);font-weight:700;">
-          Reset
-        </button>
+      <div class="table-wrap">
+        <table class="table" id="tbl">
+          <thead>
+            <tr>
+              <th class="col-id">ID</th>
+              <th class="col-name">Název</th>
+              <th class="col-price">Cena(Eur)</th>
+              <th class="col-qty">Prodané</th>
+              <th class="col-sum">Celkem(Eur)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-/* ====== POMOCNÉ FORMÁTOVÁNÍ (cs-CZ) ====== */
+/* ====== formátování ====== */
 const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
 const fmtEur = (n)=> `${fmtNum(n)} Eur`;
 
@@ -278,6 +295,7 @@ const ITEMS = [
   /* SLUŽBY (prodejci) */
   { id:'AE', name:'Frézování',         price:1.90,  cat:'sluzby', toSeller:true },
   { id:'AF', name:'Balení',            price:1.90,  cat:'sluzby', toSeller:true },
+  { id:'AG', name:'Auto: počet stromů (B–S)', price:0, cat:'sluzby', isAG:true, readonly:true },
 
   { id:'AH', name:'Akce',              price:12.90, cat:'akce' },
   { id:'AI', name:'Treefood',          price:1.50,  cat:'treefood' }
@@ -293,6 +311,7 @@ const cntStojanyEl = document.getElementById('cntStojany');
 const cntSluzbyEl = document.getElementById('cntSluzby');
 
 const qty = {};     // id -> kusy
+let agQtySpan = null; // ukazatel na <span> s počtem AG
 
 function trClass(cat){
   return ({
@@ -319,9 +338,9 @@ function qtyControl(initial, onChange){
   // ruční zadání
   inp.addEventListener('input', ()=> set(clean(inp.value)));
 
-  // klávesnice (Enter/Space na tlačítku) – e.detail === 0 = ne-myš
-  plus.addEventListener('click', (e)=>{ if(e.detail===0) set(clean(inp.value)+1); });
-  minus.addEventListener('click', (e)=>{ if(e.detail===0) set(Math.max(0, clean(inp.value)-1)); });
+  // klik zneškodníme, navýšení řeší press&hold níže
+  plus.addEventListener('click',  e=> e.preventDefault());
+  minus.addEventListener('click', e=> e.preventDefault());
 
   wrap.append(minus, inp, plus);
   return wrap;
@@ -347,12 +366,18 @@ function build(){
     const qtyCell = tr.querySelector('[data-qty]');
     const sumCell = tr.querySelector('[data-sum]');
 
+    // AG: needitovatelný řádek
+    if (it.isAG) {
+      qtyCell.innerHTML = `<span class="mono" id="agQty">0</span>`;
+      agQtySpan = qtyCell.querySelector('#agQty');
+      // žádné markování uložené řádky pro AG
+      return;
+    }
+
     const setSavedMark = (n)=>{
       if(n>0) tr.classList.add('mark-saved');
       else tr.classList.remove('mark-saved');
     };
-    tr.addEventListener('focusin', ()=> tr.classList.add('mark-active'));
-    tr.addEventListener('focusout', ()=> tr.classList.remove('mark-active'));
 
     qtyCell.appendChild(qtyControl(0, n=>{
       qty[it.id]=n;
@@ -363,7 +388,7 @@ function build(){
     setSavedMark(0);
   });
 
-  // Kliknutí na řádek -> fokus do jeho inputu (mimo tlačítka a input)
+  // Klik na řádek jen zaostří input (bez vizuálního zvýraznění)
   document.querySelectorAll('#tbody tr').forEach(tr=>{
     tr.addEventListener('click',e=>{
       if(e.target.closest('.btn') || e.target.closest('.qty')) return;
@@ -371,12 +396,12 @@ function build(){
     });
   });
 
-  // Press & hold: pointer události (myš/touch), bez dvojitého kliku
+  // Press & hold
   const START=400, STEP=60, MIN=60;
   function hold(btn, fn){
     let t, d=START, down=false;
     const start=(e)=>{
-      e.preventDefault(); // zruší následný "click", aby nebylo +2
+      e.preventDefault();
       if(down) return; down=true; fn(); d=START;
       const loop=()=>{ if(!down) return; fn(); d=Math.max(MIN,d-STEP); t=setTimeout(loop,d); };
       t=setTimeout(loop,d);
@@ -398,32 +423,74 @@ function build(){
 }
 
 function recalc(){
-  let total=0, owner=0, seller=0;
+  let total = 0;
+
+  // KPI počty
   let cStromy=0, cKv=0, cSt=0, cSvc=0;
 
+  // Jednotkové ceny potřebné pro služby/hnojivo
+  const AEP = (ITEMS.find(x=>x.id==='AE')||{}).price || 1.90;
+  const AFP = (ITEMS.find(x=>x.id==='AF')||{}).price || 1.90;
+
+  // 1) Auto-AG = počet stromů B–S (mimo AH)
+  let agCount = 0;
   ITEMS.forEach(it=>{
-    const n=qty[it.id]||0, sub=n*it.price;
-    total+=sub;
-    if(it.toSeller){ seller+=sub; cSvc+=n; } else { owner+=sub; }
-    if(['smrk','borovice','jedle'].includes(it.cat)) cStromy+=n;
-    else if(it.cat==='kvetinac') cKv+=n;
-    else if(it.cat==='stojan') cSt+=n;
+    if (['smrk','borovice','jedle'].includes(it.cat) && it.id!=='AH') {
+      agCount += (qty[it.id]||0);
+    }
+  });
+  qty['AG'] = agCount;
+  if (agQtySpan) agQtySpan.textContent = String(agCount);
+
+  // 2) Tržby (Dnešní prodej) – AG nepočítáme (price 0)
+  ITEMS.forEach(it=>{
+    const n   = qty[it.id]||0;
+    const sub = n * it.price;
+
+    if (!it.isAG) total += sub;
+
+    if(['smrk','borovice','jedle'].includes(it.cat)) cStromy += n;
+    else if(it.cat==='kvetinac') cKv += n;
+    else if(it.cat==='stojan')   cSt += n;
+    else if(it.cat==='sluzby' && !it.isAG) cSvc += n;
   });
 
-  todaySalesEl.textContent=fmtEur(total);
-  envelopeEl.textContent=fmtEur(owner);
-  keepEl.textContent=fmtEur(seller);
+  // 3) Proměnné pro prodejce
+  // služby = AE + AF - AG_count
+  const svcFee = (qty['AE']||0)*AEP + (qty['AF']||0)*AFP - agCount;
 
-  cntStromyEl.textContent=String(cStromy);
-  cntKvetinaceEl.textContent=String(cKv);
-  cntStojanyEl.textContent=String(cSt);
-  cntSluzbyEl.textContent=String(cSvc);
+  // stojany = 1 € / ks
+  const standsFee = cSt * 1;
+
+  // hnojivo = 0,3 € / ks (AI)
+  const fertFee = (qty['AI']||0) * 0.3;
+
+  // haluze+imelo = 0,7 € / ks (AB, AC, AD)
+  let haluzUnits = 0;
+  ITEMS.forEach(it=>{
+    if (it.cat==='haluzimelo') haluzUnits += (qty[it.id]||0);
+  });
+  const haluzFee = 0.7 * haluzUnits;
+
+  // 4) Výsledky
+  const sellerKeep = svcFee + standsFee + fertFee + haluzFee;
+  const envelope   = total - sellerKeep;
+
+  // 5) Zobrazení
+  todaySalesEl.textContent = fmtEur(total);
+  envelopeEl.textContent   = fmtEur(envelope);
+  keepEl.textContent       = fmtEur(sellerKeep);
+
+  cntStromyEl.textContent     = String(cStromy);
+  cntKvetinaceEl.textContent  = String(cKv);
+  cntStojanyEl.textContent    = String(cSt);
+  cntSluzbyEl.textContent     = String(cSvc);
 }
 
 build();
 recalc();
 
-/* Vstup: limit 5 číslic a auto-select při fokusu */
+/* vstup: jen čísla + auto-select */
 document.addEventListener('input',e=>{
   if(e.target && e.target.classList.contains('qty')){
     e.target.value=(e.target.value+'').replace(/[^\d]/g,'').slice(0,5);
@@ -442,9 +509,7 @@ document.addEventListener('focusin',e=>{
 
   // Zamknout interaktivní prvky (mimo reset)
   const lockables = form.querySelectorAll('input, button, select');
-  lockables.forEach(el => {
-    if (el.type !== 'reset') el.disabled = true;
-  });
+  lockables.forEach(el => { if (el.type !== 'reset') el.disabled = true; });
 
   const honey = form.querySelector('input[name="website"]');
   const startedAt = performance.now();
@@ -456,10 +521,7 @@ document.addEventListener('focusin',e=>{
   window.addEventListener('keydown',   humanSignal, {once:true});
   window.addEventListener('touchstart', humanSignal, {once:true, passive:true});
 
-  function looksLikeBot(){
-    if (navigator.webdriver) return true;
-    return false;
-  }
+  function looksLikeBot(){ return !!navigator.webdriver; }
 
   function maybeUnlock(){
     if (looksLikeBot()) return;
@@ -467,28 +529,25 @@ document.addEventListener('focusin',e=>{
     const elapsed = performance.now() - startedAt;
     if (elapsed < minDelayMs) return setTimeout(maybeUnlock, minDelayMs - elapsed);
     if (!interacted) return;
-
-    lockables.forEach(el => {
-      if (el.type !== 'reset') el.disabled = false;
-    });
+    lockables.forEach(el => { if (el.type !== 'reset') el.disabled = false; });
   }
   setTimeout(maybeUnlock, minDelayMs + 120);
 
-  // Debounce a přepočet: zavoláme existující recalc()
+  // Debounce a přepočet
   let t;
-  function debounce(fn, ms){ return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms);} }
+  const debounce=(fn,ms)=>(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); };
   const computeDebounced = debounce(()=>recalc(), 120);
-
   form.addEventListener('input', computeDebounced, {passive:true});
   form.addEventListener('change', computeDebounced);
 
-  // Reset: vynuluj i JS stavy (qty -> 0) a přepočti
+  // Reset: vynuluj stavy
   form.addEventListener('reset', () => {
     setTimeout(() => {
       Object.keys(qty).forEach(k => qty[k]=0);
       document.querySelectorAll('#tbody [data-sum]').forEach(el => el.textContent = (0).toFixed(2).replace('.',','));
       document.querySelectorAll('#tbody .qty').forEach(el => el.value = '0');
-      document.querySelectorAll('#tbody tr').forEach(tr => tr.classList.remove('mark-saved','mark-active'));
+      document.querySelectorAll('#tbody tr').forEach(tr => tr.classList.remove('mark-saved'));
+      if (typeof agQtySpan!=='undefined' && agQtySpan) agQtySpan.textContent = '0';
       recalc();
     }, 0);
   });
