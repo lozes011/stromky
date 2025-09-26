@@ -5,122 +5,166 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Výpočet prodeje – vánoční stromky</title>
 <style>
-  :root{
-    --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
-    --card:#0a1c14; --line:#133322;
-    --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
+:root{
+  --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
+  --card:#0a1c14; --line:#133322;
+  --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
 
-    /* Barvy kategorií (světlé řádky) */
-    --smrk:#e6f5e9; --borovice:#e0f2e6; --jedle:#dff6ea; --kvetinac:#e6f1fb;
-    --stojan:#eef1f4; --haluzimelo:#fff8d9; --sluzby:#efe5da; --kusy:#ffe9d6;
-    --akce:var(--jedle); --treefood:#efe6ff; --text-dark:#0b1a12;
+  /* Výrazné barvy kategorií (světlé pozadí pro celé řádky) */
+  --smrk:#e6f5e9;        /* Smrk */
+  --borovice:#e0f2e6;    /* Borovice */
+  --jedle:#dff6ea;       /* Jedle */
+  --kvetinac:#e6f1fb;    /* Květ/Květináč */
+  --stojan:#eef1f4;      /* Stojan */
+  --haluzimelo:#fff8d9;  /* Haluz + Imelo */
+  --sluzby:#efe5da;      /* Balení + Frézování */
+  --kusy:#ffe9d6;        /* Kusy (oranž.) */
+  --akce: var(--jedle);  /* Akce = jako Jedle */
+  --treefood:#efe6ff;    /* Treefood (hnojivo) */
+  --text-dark:#0b1a12;   /* tmavý text pro světlé řádky */
 
-    /* UI */
-    --qty-btn:38px;          /* základní velikost tlačítek +/- */
-    --mark-saved:#29c374;    /* lišta pro uložený (nenulový) záznam */
-    --mark-active:#ffd166;   /* obrys pro právě upravovaný řádek */
+  /* Markery řádků */
+  --mark-saved-bg:#ffe6c2;  /* světle oranžová pro uložené záznamy */
+  --mark-active-bg:#fff5b8; /* světle žlutá pro aktivní práci */
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:1100px;margin:14px auto;padding:0 12px}
+h1{margin:0 0 12px;font-size:1.6rem}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+
+/* KPIs nahoře */
+.kpis{display:grid;gap:8px}
+@media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
+.kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
+.kpi .v{font-size:1.35rem;font-weight:900}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+/* Tabulka */
+.table{width:100%;border-collapse:collapse;table-layout:fixed}
+.table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
+.table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
+.table th:first-child,.table td:first-child{text-align:left}
+
+/* šířky sloupců (100 % celá tabulka) – DESKTOP/TABLET */
+.col-id{width:10%}
+.col-name{width:auto}
+.col-price{width:15%}
+.col-qty{width:20%}
+.col-sum{width:20%}
+
+/* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
+.table tbody td{color:var(--text-dark)}
+.table tbody td.mono{color:var(--text-dark)}
+
+.rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
+
+/* Barvy CELÝCH řádků dle kategorie */
+tr.row-smrk td{background:var(--smrk)}
+tr.row-borovice td{background:var(--borovice)}
+tr.row-jedle td{background:var(--jedle)}
+tr.row-kvetinac td{background:var(--kvetinac)}
+tr.row-stojan td{background:var(--stojan)}
+tr.row-haluzimelo td{background:var(--haluzimelo)}
+tr.row-sluzby td{background:var(--sluzby)}
+tr.row-kusy td{background:var(--kusy)}
+tr.row-akce td{background:var(--akce)}
+tr.row-treefood td{background:var(--treefood)}
+
+/* Ovládání kusů */
+.qtyctrl{
+  display:grid;
+  grid-template-columns: var(--qty-btn) minmax(44px, 1fr) var(--qty-btn);
+  gap:.35rem;
+  align-items:center;
+  justify-items:center;
+  width:100%;
+  max-width: clamp(140px, 32vw, 220px);
+}
+:root{ --qty-btn: 38px; }
+.qtyctrl .btn{
+  width:var(--qty-btn); height:var(--qty-btn);
+  border:1px solid var(--line); background:var(--btn);
+  color:var(--text); border-radius:12px; font-size:1.05rem;
+  font-weight:800; cursor:pointer; position:relative;
+  user-select:none; -webkit-user-select:none;
+}
+.qtyctrl .btn::before{ content:""; position:absolute; inset:-6px; }
+.btn.plus{background:linear-gradient(0deg, var(--btn-accent-2), var(--btn-accent))}
+.btn.minus{background:#163a28}
+.btn:active{transform:scale(.98)}
+.qtyctrl .qty{
+  width:100%; min-width:44px; height:var(--qty-btn);
+  text-align:center; background:#f2f7f4;
+  border:1px solid var(--line); color:var(--text-dark);
+  border-radius:10px; font-weight:800;
+}
+
+.section-title{margin:0 0 8px;font-size:1.1rem}
+
+/* Hover celé řádky – jen pro prázdné */
+.table tbody tr:not(.mark-active):not(.mark-saved):hover td,
+.table tbody tr:not(.mark-active):not(.mark-saved):focus-within td {
+  background:#29c374 !important;
+  color:#fff !important;
+}
+.table tbody tr:hover input,
+.table tbody tr:focus-within input {
+  background:#f2f7f4 !important; color:#111 !important;
+}
+
+/* Markery uložených/aktivních řádků */
+.table tbody tr.mark-saved td{
+  background: var(--mark-saved-bg) !important;
+  color: var(--text-dark) !important;
+}
+.table tbody tr.mark-active td{
+  background: var(--mark-active-bg) !important;
+  color: var(--text-dark) !important;
+}
+.table tbody tr.mark-saved.mark-active td{
+  background: var(--mark-active-bg) !important;
+}
+
+/* Sticky hlavička */
+.table thead th{
+  background: linear-gradient(#0a1c14,#0a1c14);
+  box-shadow: 0 1px 0 var(--line);
+  z-index: 2;
+}
+
+/* RESPONSIVE: mobil */
+@media (max-width:640px){
+  .col-id{width:8%}
+  .col-price{width:14%}
+  .col-qty{width:17%}
+  .col-sum{width:18%}
+  .table th,.table td{padding:8px 6px;font-size:.95rem}
+  .col-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  :root{--qty-btn:28px}
+  .qtyctrl{gap:.28rem;max-width:clamp(120px,38vw,170px)}
+  .qtyctrl .btn{border-radius:9px;font-size:.95rem}
+  .qtyctrl .qty{font-size:16px} /* lepší čitelnost na mobilech */
+  /* Zkrácené popisky hlaviček */
+  th.col-price::after { content:"Cena/ks"; }
+  th.col-sum::after   { content:"Suma"; }
+  th.col-price, th.col-sum { color:transparent; position:relative; }
+  th.col-price::after, th.col-sum::after{
+    color:var(--text); position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:flex-end; padding:0 6px;
   }
+}
 
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
-  h1{margin:0 0 12px;font-size:1.6rem}
-  .muted{color:var(--muted)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
-  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums;}
-
-  /* KPI */
-  .kpis{display:grid;gap:8px}
-  @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
-  .kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
-  .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
-  .kpi .v{font-size:1.35rem;font-weight:900}
-
-  /* Tabulka */
-  .table{width:100%;border-collapse:collapse;table-layout:fixed}
-  .table thead th{position:sticky;top:0;background:var(--card);z-index:2;color:var(--text);box-shadow:0 1px 0 var(--line)}
-  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
-  .table th:first-child,.table td:first-child{text-align:left}
-  .table tbody td{color:var(--text-dark)}
-  .col-price,.col-sum{white-space:nowrap}   /* čísla se nelámou */
-
-  /* Sloupce (desktop/tablet) */
-  .col-id{width:10%}
-  .col-name{width:auto}
-  .col-price{width:15%}
-  .col-qty{width:20%}
-  .col-sum{width:20%}
-
-  .rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
-
-  /* Barvy celých řádků dle kategorie */
-  tr.row-smrk td{background:var(--smrk)}
-  tr.row-borovice td{background:var(--borovice)}
-  tr.row-jedle td{background:var(--jedle)}
-  tr.row-kvetinac td{background:var(--kvetinac)}
-  tr.row-stojan td{background:var(--stojan)}
-  tr.row-haluzimelo td{background:var(--haluzimelo)}
-  tr.row-sluzby td{background:var(--sluzby)}
-  tr.row-kusy td{background:var(--kusy)}
-  tr.row-akce td{background:var(--akce)}
-  tr.row-treefood td{background:var(--treefood)}
-
-  /* Hover celé řádky */
-  .table tbody tr:hover td,
-  .table tbody tr:focus-within td { background:#29c374!important; color:#fff!important }
-  /* Ale input při hoveru zůstane čitelný */
-  .table tbody tr:hover input,
-  .table tbody tr:focus-within input { background:#f2f7f4!important; color:#111!important }
-
-  /* Markery stavu řádku */
-  .table tbody tr.mark-saved td{ box-shadow: inset 4px 0 var(--mark-saved); }
-  .table tbody tr.mark-active td{ outline:2px solid var(--mark-active)!important; outline-offset:-2px; }
-
-  /* Ovládání kusů – pružné, škáluje s buněčnou šířkou */
-  .qtyctrl{
-    display:grid;
-    grid-template-columns: var(--qty-btn) minmax(44px,1fr) var(--qty-btn);
-    gap:.35rem; align-items:center; justify-items:center;
-    width:100%; max-width: clamp(140px, 32vw, 220px);
-  }
-  .qtyctrl .btn{
-    width:var(--qty-btn); height:var(--qty-btn);
-    border:1px solid var(--line); background:var(--btn); color:var(--text);
-    border-radius:12px; font-size:1.05rem; font-weight:800; cursor:pointer;
-    position:relative; user-select:none; -webkit-user-select:none;
-  }
-  .btn.plus{background:linear-gradient(0deg,var(--btn-accent-2),var(--btn-accent))}
-  .btn.minus{background:#163a28}
-  .btn:active{transform:scale(.98)}
-  .qtyctrl .btn::before{content:""; position:absolute; inset:-6px;} /* větší touch plocha */
-  .qty{
-    width:100%; min-width:44px; height:var(--qty-btn);
-    text-align:center; background:#f2f7f4; border:1px solid var(--line);
-    color:var(--text-dark); border-radius:10px; font-weight:800;
-  }
-
-  .section-title{margin:0 0 8px;font-size:1.1rem}
-
-  /* Mobil – vše v jednom řádku, zkrácené hlavičky */
-  @media (max-width:640px){
-    :root{ --qty-btn:28px; }
-    .col-id{width:8%} .col-price{width:14%} .col-qty{width:17%} .col-sum{width:18%}
-    .table th,.table td{padding:8px 6px; font-size:.95rem}
-    .col-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-    .qty{font-size:16px} /* anti-zoom iOS */
-    .qtyctrl{gap:.28rem; max-width:clamp(120px,38vw,170px)}
-    /* zkrácené texty hlaviček */
-    th.col-price::after{content:"Cena/ks"}
-    th.col-sum::after{content:"Suma"}
-    th.col-price,th.col-sum{color:transparent; position:relative}
-    th.col-price::after,th.col-sum::after{
-      color:var(--text); position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding:0 6px;
-    }
-  }
-  /* Ultra úzké – povol vodorovný posuv */
-  @media (max-width:360px){ .table{ min-width:340px } }
+/* Extra úzké telefony – raději horizontální posuv */
+@media (max-width:360px){
+  .table{ min-width:340px; }
+}
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -345,3 +389,4 @@ document.addEventListener('focusin',e=>{
 </script>
 </body>
 </html>
+
