@@ -12,104 +12,85 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--text)}
+  h1{ text-align:center; margin:1rem 0; }
+  .card{ background:var(--card); border-radius:12px; padding:1rem; margin:1rem; }
 
-  /* KARTY / SUMÁŘ zůstává beze změny… */
+  /* ============ TABULKA – DESKTOP (beze změny vzhledu) ============ */
+  .table-wrap{ overflow-x:auto; }
+  .items-table{ display:grid; grid-template-columns: 10% 1fr 15% 20% 20%; }
+  .items-table .row{ display:contents; } /* děti .row jsou buňky gridu */
+  .cell{ padding:10px 8px; border-top:1px solid var(--line); }
 
-  /* ===================== TABULKA – JEDEN ŘÁDEK ===================== */
-  /* Obal pro případný horizontální posuv na úplně nejužších mobilech */
-  .table-wrap{overflow-x:auto}
+  .head{ font-weight:700; background:#123123; }
+  .cell.id{ text-align:center; }
+  .cell.name{ text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cell.price,.cell.qty{ text-align:center; white-space:nowrap; }
+  .cell.total{ text-align:left; white-space:nowrap; }
 
-  /* Hlavička – držíme single-line */
-  .items-table .head{
-    display:grid;
-    grid-template-columns:
-      minmax(2.8ch,4.6ch)   /* ID – co nejkratší */
-      minmax(120px,1fr)     /* Název – bere zbytek */
-      minmax(7.2ch,10ch)    /* Cena */
-      minmax(9ch,12ch)      /* Kusy (ovládání) */
-      minmax(9ch,12ch);     /* Suma */
-    gap:0;
-    font-weight:700;
-    border-bottom:1px solid var(--line);
-  }
-  .items-table .head .cell{padding:.45rem .5rem;white-space:nowrap}
+  /* Barvy řádků – ponechán původní design */
+  .row.smrk  .cell{ background:#113a29; }
+  .row.bor   .cell{ background:#103427; }
+  .row.jedle .cell{ background:#0f3d2b; }
+  .row.kvet  .cell{ background:#0d2236; }
 
-  /* Každý řádek položky = grid v JEDNOM řádku (bez zalomení) */
-  .items-table .row{
-    display:grid;
-    grid-template-columns:
-      minmax(2.8ch,4.6ch)
-      minmax(120px,1fr)
-      minmax(7.2ch,10ch)
-      minmax(9ch,12ch)
-      minmax(9ch,12ch);
-    align-items:center;
-    border-bottom:1px solid var(--line);
-    gap:0;
-  }
-  .items-table .cell{padding:.5rem .5rem}
-
-  /* Zarovnání dle požadavku */
-  .items-table .cell.id{ text-align:center }
-  .items-table .cell.name{ text-align:left }
-  .items-table .cell.price,
-  .items-table .cell.qty{ text-align:center }
-  .items-table .cell.total{ text-align:left }
-
-  /* Název: vždy na 1 řádek, když je dlouhý – … */
-  .items-table .cell.name{
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
-  }
-  /* Cena & Suma – také držet na 1 řádku */
-  .items-table .cell.price,
-  .items-table .cell.total{ white-space:nowrap }
-
-  /* Odstranění „Eur“ v řádcích, ponecháno jen v hlavičce */
-  .items-table .row .eur,
-  .items-table .row .unit,
-  .items-table .row .sub { display:none !important; }
-
-  /* Ovládání kusů – kompaktní */
-  .qty .qty-controls{ display:inline-flex; align-items:center; gap:.35rem; }
-  .qty .btn{
-    width:28px; height:28px; border:0; border-radius:8px;
-    background:var(--btn); color:var(--text); font-size:1rem; line-height:1;
+  /* Ovládání množství */
+  .qty-controls{ display:inline-flex; align-items:center; gap:.4rem; }
+  .qty-controls .btn{
+    width:36px; height:36px; border:0; border-radius:10px;
+    background:var(--btn); color:var(--text); font-size:1.1rem; line-height:1;
     display:inline-grid; place-items:center;
   }
-  .qty .btn:hover{ background:var(--btn-accent); cursor:pointer }
-  .qty input[type="number"]{
-    width:54px; padding:.3rem .35rem; text-align:center;
+  .qty-controls .btn:hover{ background:var(--btn-accent); cursor:pointer; }
+  .qty-controls input[type="number"]{
+    width:72px; text-align:center; font-size:1rem;
     border-radius:8px; border:1px solid var(--line); background:#fff; color:#111; font-weight:600;
-    -moz-appearance: textfield;
+    -moz-appearance:textfield;
   }
-  .qty input[type=number]::-webkit-outer-spin-button,
-  .qty input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+  .qty-controls input[type=number]::-webkit-outer-spin-button,
+  .qty-controls input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 
-  /* Barevné pásy – nechávám tvoje třídy, jen příklad */
-  .items-table .row.smrk  .cell{ background:#113a29 }
-  .items-table .row.bor   .cell{ background:#103427 }
-  .items-table .row.jedle .cell{ background:#0f3d2b }
-  .items-table .row.kvet  .cell{ background:#0d2236 }
+  /* Skrytí “Eur” v jednotlivých řádcích (ponecháno jen v hlavičce) */
+  .row .eur, .row .unit, .row .sub { display:none !important; }
 
-  /* Jemné zmenšení na malých mobilech, stále v JEDNOM ŘÁDKU */
-  @media (max-width: 420px){
-    .items-table .cell{ padding:.4rem .42rem; font-size:.92rem }
-    .qty .btn{ width:26px; height:26px; border-radius:7px; font-size:.95rem }
-    .qty input[type="number"]{ width:50px; padding:.28rem .3rem; font-size:.95rem }
-    .items-table .head,
-    .items-table .row{
-      grid-template-columns:
-        minmax(2.6ch,4.2ch)
-        minmax(100px,1fr)
-        minmax(6.8ch,9ch)
-        minmax(8.6ch,11ch)
-        minmax(8.6ch,11ch);
+  /* ============ RESPONSIVE ============ */
+  /* Tablet – lehce kompaktnější, ale stále jeden řádek */
+  @media (max-width: 900px){
+    .items-table{ grid-template-columns:
+      minmax(3.2ch,8%)    /* ID – co nejmenší */
+      minmax(180px,1fr)   /* Název – bere zbytek */
+      minmax(8ch,16%)     /* Cena */
+      minmax(10ch,18%)    /* Kusy */
+      minmax(10ch,18%);   /* Suma */
     }
+    .cell{ padding:9px 7px; }
+    .qty-controls .btn{ width:34px; height:34px; }
+    .qty-controls input[type="number"]{ width:64px; }
   }
 
-  /* Když je prostor extrémně těsný, dovol horizontální posuv celé tabulce */
-  .items-table{ min-width: 360px; }
+  /* Telefon – pořád JEDEN ŘÁDEK, vše se zmenší, aby se nic nepřekrývalo */
+  @media (max-width: 640px){
+    .items-table{ grid-template-columns:
+      minmax(2.8ch,9%)    /* ID */
+      minmax(130px,1fr)   /* Název */
+      minmax(7ch,15%)     /* Cena */
+      minmax(9ch,18%)     /* Kusy */
+      minmax(9ch,20%);    /* Suma */
+    }
+    .cell{ padding:8px 6px; font-size:.94rem; }
+    .qty-controls{ gap:.32rem; }
+    .qty-controls .btn{ width:30px; height:30px; border-radius:9px; font-size:1rem; }
+    .qty-controls input[type="number"]{ width:56px; font-size:.95rem; }
+  }
+
+  /* Extra úzké telefony – dovolíme horizontální posuv celé tabulky */
+  @media (max-width: 360px){
+    .items-table{ min-width: 340px; }
+  }
+
+  /* Focus zvýraznění (původní chování) */
+  .row:has(.qty-controls input:focus) .cell{ outline:2px solid var(--btn-accent-2); outline-offset:-2px; }
 </style>
+
 
 </head>
 <body>
@@ -336,4 +317,5 @@ recalc();
 </script>
 </body>
 </html>
+
 
