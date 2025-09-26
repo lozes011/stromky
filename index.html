@@ -189,6 +189,23 @@
 @media (max-width:360px){
   .table{ min-width:340px; }
 }
+/* Zkrácené popisky hlaviček na mobilech */
+@media (max-width:640px){
+  th.col-price::after { content:"Cena/ks"; }
+  th.col-sum::after   { content:"Suma"; }
+  th.col-price, th.col-sum { color:transparent; position:relative; }
+  th.col-price::after, th.col-sum::after{
+    color:var(--text); position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end;
+    padding:0 6px;
+  }
+}
+/* Monospace fallback pro čísla */
+.mono{ font-variant-numeric: tabular-nums; }
+
+/* Focus řádku při psaní do inputu */
+.table tbody tr:has(.qty:focus) td{
+  outline:2px solid var(--btn-accent-2); outline-offset:-2px;
+}
 
 </style>
 </head>
@@ -421,7 +438,14 @@ document.querySelectorAll('.qty').forEach(inp=>{
     inp.value = (inp.value+'').replace(/[^\d]/g,'').slice(0,5);
   });
 });
+  document.addEventListener('focusin',e=>{
+  if(e.target && e.target.classList.contains('qty')){
+    e.target.select();
+  }
+});
+
 </script>
 </body>
 </html>
+
 
