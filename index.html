@@ -136,6 +136,60 @@
   @media (max-width: 360px){
     .table{ min-width: 340px; }
   }
+
+  /* === FIX: Prodané kusy – pružné ovládání, škáluje s šířkou buňky === */
+
+/* velikost tlačítek jako proměnná – desktop */
+:root { --qty-btn: 38px; }
+
+/* kontejner na 100 % šířky buňky; střed (input) je pružný */
+.qtyctrl{
+  display:grid;
+  grid-template-columns: var(--qty-btn) minmax(44px, 1fr) var(--qty-btn);
+  gap:.35rem;
+  align-items:center;
+  justify-items:center;
+  width:100%;
+  max-width: clamp(140px, 32vw, 220px); /* škáluje s šířkou sloupce */
+}
+
+/* tlačítka mají pevný čtverec dle proměnné */
+.qtyctrl .btn{
+  width:var(--qty-btn);
+  height:var(--qty-btn);
+  border-radius:12px;
+  font-size:1.05rem;
+}
+
+/* input zabere zbytek – žádné pevné width */
+.qtyctrl .qty{
+  width:100%;
+  min-width:44px;
+  height:var(--qty-btn);
+  font-weight:800;
+}
+
+/* zabraň rozbití číselných sloupců */
+.col-price, .col-sum { white-space:nowrap; }
+
+/* Mobil: zmenšíme tlačítka i výšku, input zůstane pružný */
+@media (max-width:640px){
+  :root { --qty-btn: 28px; }
+  .qtyctrl{ gap:.28rem; max-width: clamp(120px, 38vw, 170px); }
+  .qtyctrl .btn{ border-radius:9px; font-size:.95rem; }
+  .qtyctrl .qty{ font-size:.95rem; }
+  /* ať má Název prioritu, ostatní lehce užší */
+  .col-id{width:8%}
+  .col-price{width:14%}
+  .col-qty{width:17%}
+  .col-sum{width:18%}
+}
+
+/* ultra úzké – raději povolit horizontální posuv tabulky */
+@media (max-width:360px){
+  .table{ min-width:340px; }
+}
+
 </style>
 </head>
 <body>
@@ -370,3 +424,4 @@ document.querySelectorAll('.qty').forEach(inp=>{
 </script>
 </body>
 </html>
+
