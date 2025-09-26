@@ -5,90 +5,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Výpočet prodeje – vánoční stromky</title>
 <style>
-  :root{
-    --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
-    --card:#0a1c14; --line:#133322;
-    --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
+:root{
+  --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
+  --card:#0a1c14; --line:#133322;
+  --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
+  --btn-plus:#1fb56a; --btn-minus:#10281d;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif; margin:0}
+
+/* ---- KARTY (souhrn nahoře) – vzhled jako dřív ---- */
+.card{background:var(--card); border-radius:14px; padding:1rem; margin:1rem;}
+.grid-cards{display:grid; gap:12px; grid-template-columns:repeat(3,1fr);}
+.stat{background:#0d261b; border-radius:12px; padding:.9rem 1rem;}
+.stat h3{margin:0 0 .25rem; font-size:1rem; color:var(--muted); font-weight:600;}
+.stat .val{margin:0; font-weight:800; font-size:1.35rem}
+
+/* ---- TABULKA – původní desktop layout ---- */
+.table-wrap{overflow-x:auto;}
+.items-table{display:grid; grid-template-columns:10% 1fr 15% 20% 20%; border-radius:12px; overflow:hidden;}
+.items-table .row{display:contents;}
+.cell{padding:10px 10px; border-top:1px solid var(--line);}
+.head{font-weight:800; background:#123123;}
+.cell.id{text-align:center;}
+.cell.name{text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cell.price,.cell.qty{text-align:center; white-space:nowrap;}
+.cell.total{text-align:left; white-space:nowrap}
+
+/* FULL-ROW BARVENÍ (jako na 1. screenu) */
+.row.smrk  .cell{background:#e6f5e914;}
+.row.bor   .cell{background:#e0f2e614;}
+.row.jedle .cell{background:#dff6ea14;}
+.row.kvet  .cell{background:#e6f1fb14;}
+
+/* ---- Ovládání množství – vzhled + / − jako na 1. screenu ---- */
+.qty-controls{display:inline-flex; align-items:center; gap:.45rem;}
+.qty-controls .btn{
+  width:38px; height:38px; border:0; border-radius:12px;
+  color:#fff; font-size:1.05rem; font-weight:800; display:inline-grid; place-items:center;
+}
+.qty-controls .btn.minus{background:var(--btn-minus);}
+.qty-controls .btn.plus{background:var(--btn-plus);}
+.qty-controls .btn:active{transform:translateY(1px)}
+.qty-controls input[type="number"]{
+  width:78px; padding:.4rem .5rem; text-align:center;
+  border-radius:10px; border:1px solid var(--line); background:#fff; color:#111; font-weight:700;
+  -moz-appearance:textfield;
+}
+.qty-controls input[type=number]::-webkit-outer-spin-button,
+.qty-controls input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+
+/* ---- Skrytí “Eur” v řádcích; v hlavičce zůstává ---- */
+.row .eur, .row .unit, .row .sub{display:none !important;}
+
+/* ---- RESPONSIVE – jen zmenšujeme, nic nepřekreslujeme ---- */
+/* větší tablety – lehké zúžení číselných sloupců */
+@media (max-width: 1200px){
+  .items-table{grid-template-columns:9% 1fr 14% 18.5% 18.5%;}
+}
+
+/* tablety/menší laptopy */
+@media (max-width: 992px){
+  .grid-cards{grid-template-columns:repeat(2,1fr);}
+  .items-table{grid-template-columns:8.5% 1fr 14% 18% 18%;}
+  .cell{padding:9px 8px;}
+  .qty-controls .btn{width:36px; height:36px; border-radius:11px;}
+  .qty-controls input[type="number"]{width:72px;}
+}
+
+/* telefony – stále JEDEN ŘÁDEK, priorita pro název; kompaktnější +/−/input */
+@media (max-width: 640px){
+  .grid-cards{grid-template-columns:1fr;}
+  .items-table{
+    grid-template-columns:
+      minmax(2.6ch,8.2%)     /* ID – nejmenší, ale čitelné */
+      minmax(130px,1fr)      /* Název – bere zbytek */
+      minmax(7ch,14.2%)      /* Cena */
+      minmax(8.6ch,17.5%)    /* Kusy (ovládání) */
+      minmax(8.6ch,18.5%);   /* Suma */
   }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--text)}
-  h1{ text-align:center; margin:1rem 0; }
-  .card{ background:var(--card); border-radius:12px; padding:1rem; margin:1rem; }
+  .cell{padding:8px 6px; font-size:.95rem;}
+  .qty-controls{gap:.32rem;}
+  .qty-controls .btn{width:30px; height:30px; border-radius:9px; font-size:1rem;}
+  .qty-controls input[type="number"]{width:56px; font-size:.95rem;}
+}
 
-  /* ============ TABULKA – DESKTOP (beze změny vzhledu) ============ */
-  .table-wrap{ overflow-x:auto; }
-  .items-table{ display:grid; grid-template-columns: 10% 1fr 15% 20% 20%; }
-  .items-table .row{ display:contents; } /* děti .row jsou buňky gridu */
-  .cell{ padding:10px 8px; border-top:1px solid var(--line); }
+/* extra úzké telefony – raději dovol horizontální posuv než lámat řádky */
+@media (max-width: 360px){
+  .items-table{min-width:340px;}
+}
 
-  .head{ font-weight:700; background:#123123; }
-  .cell.id{ text-align:center; }
-  .cell.name{ text-align:left; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .cell.price,.cell.qty{ text-align:center; white-space:nowrap; }
-  .cell.total{ text-align:left; white-space:nowrap; }
+/* Focus highlight jako dřív */
+.row:has(.qty-controls input:focus) .cell{outline:2px solid var(--btn-accent-2); outline-offset:-2px;}
 
-  /* Barvy řádků – ponechán původní design */
-  .row.smrk  .cell{ background:#113a29; }
-  .row.bor   .cell{ background:#103427; }
-  .row.jedle .cell{ background:#0f3d2b; }
-  .row.kvet  .cell{ background:#0d2236; }
-
-  /* Ovládání množství */
-  .qty-controls{ display:inline-flex; align-items:center; gap:.4rem; }
-  .qty-controls .btn{
-    width:36px; height:36px; border:0; border-radius:10px;
-    background:var(--btn); color:var(--text); font-size:1.1rem; line-height:1;
-    display:inline-grid; place-items:center;
-  }
-  .qty-controls .btn:hover{ background:var(--btn-accent); cursor:pointer; }
-  .qty-controls input[type="number"]{
-    width:72px; text-align:center; font-size:1rem;
-    border-radius:8px; border:1px solid var(--line); background:#fff; color:#111; font-weight:600;
-    -moz-appearance:textfield;
-  }
-  .qty-controls input[type=number]::-webkit-outer-spin-button,
-  .qty-controls input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-
-  /* Skrytí “Eur” v jednotlivých řádcích (ponecháno jen v hlavičce) */
-  .row .eur, .row .unit, .row .sub { display:none !important; }
-
-  /* ============ RESPONSIVE ============ */
-  /* Tablet – lehce kompaktnější, ale stále jeden řádek */
-  @media (max-width: 900px){
-    .items-table{ grid-template-columns:
-      minmax(3.2ch,8%)    /* ID – co nejmenší */
-      minmax(180px,1fr)   /* Název – bere zbytek */
-      minmax(8ch,16%)     /* Cena */
-      minmax(10ch,18%)    /* Kusy */
-      minmax(10ch,18%);   /* Suma */
-    }
-    .cell{ padding:9px 7px; }
-    .qty-controls .btn{ width:34px; height:34px; }
-    .qty-controls input[type="number"]{ width:64px; }
-  }
-
-  /* Telefon – pořád JEDEN ŘÁDEK, vše se zmenší, aby se nic nepřekrývalo */
-  @media (max-width: 640px){
-    .items-table{ grid-template-columns:
-      minmax(2.8ch,9%)    /* ID */
-      minmax(130px,1fr)   /* Název */
-      minmax(7ch,15%)     /* Cena */
-      minmax(9ch,18%)     /* Kusy */
-      minmax(9ch,20%);    /* Suma */
-    }
-    .cell{ padding:8px 6px; font-size:.94rem; }
-    .qty-controls{ gap:.32rem; }
-    .qty-controls .btn{ width:30px; height:30px; border-radius:9px; font-size:1rem; }
-    .qty-controls input[type="number"]{ width:56px; font-size:.95rem; }
-  }
-
-  /* Extra úzké telefony – dovolíme horizontální posuv celé tabulky */
-  @media (max-width: 360px){
-    .items-table{ min-width: 340px; }
-  }
-
-  /* Focus zvýraznění (původní chování) */
-  .row:has(.qty-controls input:focus) .cell{ outline:2px solid var(--btn-accent-2); outline-offset:-2px; }
 </style>
 
 
@@ -317,5 +326,6 @@ recalc();
 </script>
 </body>
 </html>
+
 
 
