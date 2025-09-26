@@ -10,7 +10,7 @@
     --card:#0a1c14; --line:#133322;
     --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
 
-    /* Výrazné barvy kategorií */
+    /* Výrazné barvy kategorií (světlé pozadí pro celé řádky) */
     --smrk:#e6f5e9;        /* Smrk */
     --borovice:#e0f2e6;    /* Borovice */
     --jedle:#dff6ea;       /* Jedle */
@@ -27,7 +27,7 @@
   /* zvýraznění CELÉHO řádku při hover/focus */
   .table tbody tr:hover td,
   .table tbody tr:focus-within td {
-    background: #29c374 !important;
+    background: #29c374 !important; /* akcent zelená */
     color: #fff !important;
   }
 
@@ -50,15 +50,15 @@
   /* Tabulka */
   .table{width:100%;border-collapse:collapse;table-layout:fixed}
   .table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
-  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;vertical-align:middle;text-align:left}
-  .table th:first-child,.table td:first-child{text-align:center} /* ID v hlavičce i těle na střed */
+  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
+  .table th:first-child,.table td:first-child{text-align:left}
 
-  /* šířky sloupců */
-  .col-id{width:10%; text-align:center}
-  .col-name{width:auto; text-align:left}
-  .col-price{width:15%; text-align:center}
-  .col-qty{width:20%; text-align:center}
-  .col-sum{width:20%; text-align:left}
+  /* šířky sloupců (100 % celá tabulka) */
+  .col-id{width:10%}
+  .col-name{width:auto}       /* vyplní zbytek */
+  .col-price{width:15%}
+  .col-qty{width:20%}
+  .col-sum{width:20%}
 
   /* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
   .table tbody td{color:var(--text-dark)}
@@ -66,7 +66,7 @@
 
   .rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
 
-  /* Barvy CELÝCH řádků */
+  /* Barvy CELÝCH řádků dle kategorie */
   tr.row-smrk td{background:var(--smrk)}
   tr.row-borovice td{background:var(--borovice)}
   tr.row-jedle td{background:var(--jedle)}
@@ -147,13 +147,14 @@
 </div>
 
 <script>
-/* ====== POMOCNÉ FORMÁTOVÁNÍ ====== */
+/* ====== POMOCNÉ FORMÁTOVÁNÍ (cs-CZ) ====== */
 const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
+const fmtEur = (n)=> `${fmtNum(n)} Eur`;
 
 /* ===========================================================
    CONFIG – ceník a klasifikace
    - Služby: Frézování (AE) + Síto/Balení (AF) – obě jdou prodejci
-   - Doplňek: Treefood (AI) – není služba
+   - Doplňek (ne služba): Treefood (AI)
    =========================================================== */
 const ITEMS = [
   /* Stromy */
@@ -265,9 +266,9 @@ function build(){
     const tr = addRow(tbody, `
       <td class="col-id"><span class="rowid mono">${it.id}</span></td>
       <td class="col-name">${it.name}</td>
-      <td class="col-price mono">${fmtNum(it.price)}</td>
+      <td class="col-price mono">${fmtEur(it.price)}</td>
       <td class="col-qty" data-qty></td>
-      <td class="col-sum mono" data-sum">${fmtNum(0)}</td>
+      <td class="col-sum mono" data-sum>${fmtEur(0)}</td>
     `);
     tr.className = trClass(it.cat);
 
@@ -275,7 +276,7 @@ function build(){
     const sumCell = tr.querySelector('[data-sum]');
     qtyCell.appendChild(qtyControl(0, n=>{
       qty[it.id]=n;
-      sumCell.textContent = fmtNum(n*it.price);
+      sumCell.textContent = fmtEur(n*it.price);
       recalc();
     }));
   });
@@ -297,8 +298,6 @@ function recalc(){
     else if (it.cat==='stojan')   cSt += n;
   });
 
-  // KPI zůstanou s měnou v textu
-  const fmtEur = (x)=> `${fmtNum(x)} Eur`;
   todaySalesEl.textContent = fmtEur(total);
   envelopeEl.textContent   = fmtEur(owner);
   keepEl.textContent       = fmtEur(seller);
