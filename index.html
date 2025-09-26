@@ -50,8 +50,7 @@
   /* Tabulka */
   .table{width:100%;border-collapse:collapse;table-layout:fixed}
   .table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
-  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:right;vertical-align:middle}
-  .table th:first-child,.table td:first-child{text-align:left}
+  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;vertical-align:middle}
 
   /* šířky sloupců (100 % celá tabulka) */
   .col-id{width:10%}
@@ -59,6 +58,13 @@
   .col-price{width:15%}
   .col-qty{width:20%}
   .col-sum{width:20%}
+
+  /* ZAROVNÁNÍ PODLE POŽADAVKU */
+  .col-id,  td.col-id   { text-align:center; }
+  .col-name,td.col-name { text-align:left; }
+  .col-price,td.col-price { text-align:center; }
+  .col-qty, td.col-qty  { text-align:center; }
+  .col-sum, td.col-sum  { text-align:center; }
 
   /* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
   .table tbody td{color:var(--text-dark)}
@@ -87,6 +93,14 @@
   .qty{width:100%;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;height:36px;font-weight:800}
 
   .section-title{margin:0 0 8px;font-size:1.1rem}
+
+  /* Mobilní drobnosti */
+  @media(max-width:640px){
+    .qtyctrl{grid-template-columns:36px 64px 36px}
+    .qty{height:34px}
+    .btn{height:34px}
+    .table th,.table td{padding:7px}
+  }
 </style>
 </head>
 <body>
@@ -149,7 +163,7 @@
 <script>
 /* ====== POMOCNÉ FORMÁTOVÁNÍ (cs-CZ) ====== */
 const fmtNum = (n)=> new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtEur = (n)=> `${fmtNum(n)} Eur`;
+const fmtEur = (n)=> `${fmtNum(n)} Eur`;   // používá se jen v KPI a souhrnech
 
 /* ===========================================================
    CONFIG – ceník a klasifikace
@@ -266,9 +280,9 @@ function build(){
     const tr = addRow(tbody, `
       <td class="col-id"><span class="rowid mono">${it.id}</span></td>
       <td class="col-name">${it.name}</td>
-      <td class="col-price mono">${fmtEur(it.price)}</td>
+      <td class="col-price mono">${fmtNum(it.price)}</td>
       <td class="col-qty" data-qty></td>
-      <td class="col-sum mono" data-sum>${fmtEur(0)}</td>
+      <td class="col-sum mono" data-sum>${fmtNum(0)}</td>
     `);
     tr.className = trClass(it.cat);
 
@@ -276,7 +290,7 @@ function build(){
     const sumCell = tr.querySelector('[data-sum]');
     qtyCell.appendChild(qtyControl(0, n=>{
       qty[it.id]=n;
-      sumCell.textContent = fmtEur(n*it.price);
+      sumCell.textContent = fmtNum(n*it.price);   // << bez "Eur" v řádku
       recalc();
     }));
   });
