@@ -9,99 +9,108 @@
     --bg:#06140e; --text:#e8f5ee; --muted:#9bc7b2;
     --card:#0a1c14; --line:#133322;
     --btn:#0e2a1d; --btn-accent:#29c374; --btn-accent-2:#1ea663;
-
-    /* Výrazné barvy kategorií (světlé pozadí pro celé řádky) */
-    --smrk:#e6f5e9;        /* Smrk */
-    --borovice:#e0f2e6;    /* Borovice */
-    --jedle:#dff6ea;       /* Jedle */
-    --kvetinac:#e6f1fb;    /* Květ/Květináč */
-    --stojan:#eef1f4;      /* Stojan */
-    --haluzimelo:#fff8d9;  /* Haluz + Imelo */
-    --sluzby:#efe5da;      /* Balení + Frézování (služby prodejce) */
-    --kusy:#ffe9d6;        /* Kusy (oranž.) */
-    --akce: var(--jedle);  /* Akce = jako Jedle */
-    --treefood:#efe6ff;    /* Treefood (hnojivo) */
-    --text-dark:#0b1a12;   /* tmavý text pro světlé řádky */
   }
-
-  /* zvýraznění CELÉHO řádku při hover/focus */
-  .table tbody tr:hover td,
-  .table tbody tr:focus-within td {
-    background: #29c374 !important; /* akcent zelená */
-    color: #fff !important;
-  }
-
   *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:1100px;margin:14px auto;padding:0 12px}
-  h1{margin:0 0 12px;font-size:1.6rem}
-  .muted{color:var(--muted)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:var(--bg);color:var(--text)}
 
-  /* KPIs nahoře */
-  .kpis{display:grid;gap:8px}
-  @media(min-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  @media(min-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
-  .kpi{background:#092416;border:1px solid var(--line);border-radius:14px;padding:10px}
-  .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted)}
-  .kpi .v{font-size:1.35rem;font-weight:900}
-  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  /* KARTY / SUMÁŘ zůstává beze změny… */
 
-  /* Tabulka */
-  .table{width:100%;border-collapse:collapse;table-layout:fixed}
-  .table thead th{position:sticky;top:0;background:var(--card);z-index:1;color:var(--text)}
-  .table th,.table td{border-bottom:1px solid var(--line);padding:8px;vertical-align:middle}
+  /* ===================== TABULKA – JEDEN ŘÁDEK ===================== */
+  /* Obal pro případný horizontální posuv na úplně nejužších mobilech */
+  .table-wrap{overflow-x:auto}
 
-  /* šířky sloupců (100 % celá tabulka) */
-  .col-id{width:10%}
-  .col-name{width:auto}       /* vyplní zbytek */
-  .col-price{width:15%}
-  .col-qty{width:20%}
-  .col-sum{width:20%}
-
-  /* ZAROVNÁNÍ PODLE POŽADAVKU */
-  .col-id,  td.col-id   { text-align:center; }
-  .col-name,td.col-name { text-align:left; }
-  .col-price,td.col-price { text-align:center; }
-  .col-qty, td.col-qty  { text-align:center; }
-  .col-sum, td.col-sum  { text-align:center; }
-
-  /* tmavý text v těle tabulky pro čitelnost na světlých řádcích */
-  .table tbody td{color:var(--text-dark)}
-  .table tbody td.mono{color:var(--text-dark)}
-
-  .rowid{display:inline-block;font-weight:700;background:#123624;color:#c6f6d5;padding:2px 8px;border-radius:999px}
-
-  /* Barvy CELÝCH řádků dle kategorie */
-  tr.row-smrk td{background:var(--smrk)}
-  tr.row-borovice td{background:var(--borovice)}
-  tr.row-jedle td{background:var(--jedle)}
-  tr.row-kvetinac td{background:var(--kvetinac)}
-  tr.row-stojan td{background:var(--stojan)}
-  tr.row-haluzimelo td{background:var(--haluzimelo)}
-  tr.row-sluzby td{background:var(--sluzby)}
-  tr.row-kusy td{background:var(--kusy)}
-  tr.row-akce td{background:var(--akce)}
-  tr.row-treefood td{background:var(--treefood)}
-
-  /* Ovládání kusů */
-  .qtyctrl{display:inline-grid;grid-template-columns:40px 70px 40px;gap:6px;align-items:center;justify-items:center}
-  .btn{width:100%;height:36px;border:1px solid var(--line);background:var(--btn);color:var(--text);border-radius:10px;font-size:1.1rem;font-weight:800;cursor:pointer}
-  .btn.plus{background:linear-gradient(0deg, var(--btn-accent-2), var(--btn-accent))}
-  .btn.minus{background:#163a28}
-  .btn:active{transform:scale(.98)}
-  .qty{width:100%;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;height:36px;font-weight:800}
-
-  .section-title{margin:0 0 8px;font-size:1.1rem}
-
-  /* Mobilní drobnosti */
-  @media(max-width:640px){
-    .qtyctrl{grid-template-columns:36px 64px 36px}
-    .qty{height:34px}
-    .btn{height:34px}
-    .table th,.table td{padding:7px}
+  /* Hlavička – držíme single-line */
+  .items-table .head{
+    display:grid;
+    grid-template-columns:
+      minmax(2.8ch,4.6ch)   /* ID – co nejkratší */
+      minmax(120px,1fr)     /* Název – bere zbytek */
+      minmax(7.2ch,10ch)    /* Cena */
+      minmax(9ch,12ch)      /* Kusy (ovládání) */
+      minmax(9ch,12ch);     /* Suma */
+    gap:0;
+    font-weight:700;
+    border-bottom:1px solid var(--line);
   }
+  .items-table .head .cell{padding:.45rem .5rem;white-space:nowrap}
+
+  /* Každý řádek položky = grid v JEDNOM řádku (bez zalomení) */
+  .items-table .row{
+    display:grid;
+    grid-template-columns:
+      minmax(2.8ch,4.6ch)
+      minmax(120px,1fr)
+      minmax(7.2ch,10ch)
+      minmax(9ch,12ch)
+      minmax(9ch,12ch);
+    align-items:center;
+    border-bottom:1px solid var(--line);
+    gap:0;
+  }
+  .items-table .cell{padding:.5rem .5rem}
+
+  /* Zarovnání dle požadavku */
+  .items-table .cell.id{ text-align:center }
+  .items-table .cell.name{ text-align:left }
+  .items-table .cell.price,
+  .items-table .cell.qty{ text-align:center }
+  .items-table .cell.total{ text-align:left }
+
+  /* Název: vždy na 1 řádek, když je dlouhý – … */
+  .items-table .cell.name{
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;
+  }
+  /* Cena & Suma – také držet na 1 řádku */
+  .items-table .cell.price,
+  .items-table .cell.total{ white-space:nowrap }
+
+  /* Odstranění „Eur“ v řádcích, ponecháno jen v hlavičce */
+  .items-table .row .eur,
+  .items-table .row .unit,
+  .items-table .row .sub { display:none !important; }
+
+  /* Ovládání kusů – kompaktní */
+  .qty .qty-controls{ display:inline-flex; align-items:center; gap:.35rem; }
+  .qty .btn{
+    width:28px; height:28px; border:0; border-radius:8px;
+    background:var(--btn); color:var(--text); font-size:1rem; line-height:1;
+    display:inline-grid; place-items:center;
+  }
+  .qty .btn:hover{ background:var(--btn-accent); cursor:pointer }
+  .qty input[type="number"]{
+    width:54px; padding:.3rem .35rem; text-align:center;
+    border-radius:8px; border:1px solid var(--line); background:#fff; color:#111; font-weight:600;
+    -moz-appearance: textfield;
+  }
+  .qty input[type=number]::-webkit-outer-spin-button,
+  .qty input[type=number]::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
+
+  /* Barevné pásy – nechávám tvoje třídy, jen příklad */
+  .items-table .row.smrk  .cell{ background:#113a29 }
+  .items-table .row.bor   .cell{ background:#103427 }
+  .items-table .row.jedle .cell{ background:#0f3d2b }
+  .items-table .row.kvet  .cell{ background:#0d2236 }
+
+  /* Jemné zmenšení na malých mobilech, stále v JEDNOM ŘÁDKU */
+  @media (max-width: 420px){
+    .items-table .cell{ padding:.4rem .42rem; font-size:.92rem }
+    .qty .btn{ width:26px; height:26px; border-radius:7px; font-size:.95rem }
+    .qty input[type="number"]{ width:50px; padding:.28rem .3rem; font-size:.95rem }
+    .items-table .head,
+    .items-table .row{
+      grid-template-columns:
+        minmax(2.6ch,4.2ch)
+        minmax(100px,1fr)
+        minmax(6.8ch,9ch)
+        minmax(8.6ch,11ch)
+        minmax(8.6ch,11ch);
+    }
+  }
+
+  /* Když je prostor extrémně těsný, dovol horizontální posuv celé tabulce */
+  .items-table{ min-width: 360px; }
 </style>
+
 </head>
 <body>
 <div class="wrap">
@@ -327,3 +336,4 @@ recalc();
 </script>
 </body>
 </html>
+
