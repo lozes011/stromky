@@ -224,51 +224,53 @@ const fmtEur = (n)=> `${fmtNum(n)} Eur`;
    =========================================================== */
 const ITEMS = [
   /* Stromy */
-  { id:'B',  name:'Smrek B',             price:23.60, cat:'smrk' },
-  { id:'C',  name:'Smrek C',             price:39.90, cat:'smrk' },
+  { id:'B',  name:'Smrek',             price:23.60, cat:'smrk' },
+  { id:'C',  name:'Smrek',             price:39.90, cat:'smrk' },
 
-  { id:'D',  name:'Borovice D',          price:29.90, cat:'borovice' },
-  { id:'E',  name:'Borovice E',          price:39.90, cat:'borovice' },
-  { id:'F',  name:'Borovice F',          price:49.90, cat:'borovice' },
-  { id:'G',  name:'Borovice G',          price:59.90, cat:'borovice' },
+  { id:'D',  name:'Borovice',          price:29.90, cat:'borovice' },
+  { id:'E',  name:'Borovice',          price:39.90, cat:'borovice' },
+  { id:'F',  name:'Borovice',          price:49.90, cat:'borovice' },
+  { id:'G',  name:'Borovice',          price:59.90, cat:'borovice' },
 
-  { id:'H',  name:'Jedľa Akcia H',       price:16.50, cat:'jedle' },
-  { id:'I',  name:'Jedľa Akcia I',       price:23.30, cat:'jedle' },
-  { id:'J',  name:'Jedľa Akcia J',       price:29.90, cat:'jedle' },
-  { id:'K',  name:'Jedľa Akcia K',       price:36.40, cat:'jedle' },
-  { id:'L',  name:'Jedľa Akcia L',       price:43.40, cat:'jedle' },
-  { id:'M',  name:'Jedľa Nordmann M',    price:49.90, cat:'jedle' },
-  { id:'N',  name:'Jedľa Nordmann N',    price:59.90, cat:'jedle' },
-  { id:'O',  name:'Jedľa Premium O',     price:71.50, cat:'jedle' },
-  { id:'P',  name:'Jedľa Premium P',     price:85.50, cat:'jedle' },
-  { id:'Q',  name:'Jedľa Premium Q',     price:99.50, cat:'jedle' },
-  { id:'R',  name:'Jedľa Premium R',     price:135.00, cat:'jedle' },
-  { id:'S',  name:'Jedľa Premium S',     price:165.00, cat:'jedle' },
+  { id:'H',  name:'Jedľa Akcia',       price:16.50, cat:'jedle' },
+  { id:'I',  name:'Jedľa Akcia',       price:23.30, cat:'jedle' },
+  { id:'J',  name:'Jedľa Akcia',       price:29.90, cat:'jedle' },
+  { id:'K',  name:'Jedľa Akcia',       price:36.40, cat:'jedle' },
+  { id:'L',  name:'Jedľa Akcia',       price:43.40, cat:'jedle' },
+  { id:'M',  name:'Jedľa Nordmann',    price:49.90, cat:'jedle' },
+  { id:'N',  name:'Jedľa Nordmann',    price:59.90, cat:'jedle' },
+  { id:'O',  name:'Jedľa Premium',     price:71.50, cat:'jedle' },
+  { id:'P',  name:'Jedľa Premium',     price:85.50, cat:'jedle' },
+  { id:'Q',  name:'Jedľa Premium',     price:99.50, cat:'jedle' },
+  { id:'R',  name:'Jedľa Premium',     price:135.00, cat:'jedle' },
+  { id:'S',  name:'Jedľa Premium',     price:165.00, cat:'jedle' },
 
   /* Květ / Květináče */
-  { id:'T',  name:'Květ T',              price:36.40, cat:'kvetinac' },
-  { id:'Z',  name:'Kvetináč Z',          price:43.40, cat:'kvetinac' },
-  { id:'AA', name:'Kvetináč AA',         price:49.90, cat:'kvetinac' },
+  { id:'T',  name:'Květináč',          price:36.40, cat:'kvetinac' },
+  { id:'Z',  name:'Kvetináč',          price:43.40, cat:'kvetinac' },
+  { id:'AA', name:'Kvetináč',          price:49.90, cat:'kvetinac' },
 
   /* Stojany */
-  { id:'U',  name:'Stojan U',            price:34.00, cat:'stojan' },
-  { id:'V',  name:'Stojan V',            price:46.00, cat:'stojan' },
-  { id:'W',  name:'Stojan W',            price:52.00, cat:'stojan' },
-  { id:'X',  name:'Stojan X',            price:65.00, cat:'stojan' },
-  { id:'Y',  name:'Stojan Y',            price:83.00, cat:'stojan' },
+  { id:'U',  name:'Stojan',            price:34.00, cat:'stojan' },
+  { id:'V',  name:'Stojan',            price:46.00, cat:'stojan' },
+  { id:'W',  name:'Stojan',            price:52.00, cat:'stojan' },
+  { id:'X',  name:'Stojan',            price:65.00, cat:'stojan' },
+  { id:'Y',  name:'Stojan',            price:83.00, cat:'stojan' },
 
-  /* Doplňky + služby uvnitř B..AI */
-  { id:'AB', name:'Haluz AB',            price:3.90,  cat:'haluzimelo' },
-  { id:'AC', name:'Haluz AC',            price:4.90,  cat:'haluzimelo' },
-  { id:'AD', name:'Imelo AD',            price:2.90,  cat:'haluzimelo' },
+  /* Doplňky + služby */
+  { id:'AB', name:'Haluz',             price:3.90,  cat:'haluzimelo' },
+  { id:'AC', name:'Haluz',             price:4.90,  cat:'haluzimelo' },
+  { id:'AD', name:'Imelo',             price:2.90,  cat:'haluzimelo' },
 
-  /* SLUŽBY: Frézování + Balení/Síto (obojí jde prodejci) */
-  { id:'AE', name:'Frézování AE',        price:1.90,  cat:'sluzby', toSeller:true },
-  { id:'AF', name:'Síto (balení) AF',    price:1.90,  cat:'sluzby', toSeller:true },
+  /* SLUŽBY: Frézování + Balení/Síto (prodejci) */
+  { id:'AE', name:'Frézování',         price:1.90,  cat:'sluzby', toSeller:true },
+  { id:'AF', name:'Balení',            price:1.90,  cat:'sluzby', toSeller:true },
 
-  { id:'AG', name:'Kusy AG',             price:1.90,  cat:'kusy' },
-  { id:'AH', name:'Akce AH',             price:12.90, cat:'akce' },
-  { id:'AI', name:'Treefood (hnojivo) AI', price:1.50, cat:'treefood' }  /* doplněk, NE služba */
+  { id:'AG', name:'Kusy',              price:1.90,  cat:'kusy' },
+  { id:'AH', name:'Akce',              price:12.90, cat:'akce' },
+  { id:'AI', name:'Treefood',          price:1.50,  cat:'treefood' }  /* doplněk, NE služba */
+];
+
 ];
 
 /* ======== UI ======== */
@@ -389,3 +391,4 @@ document.querySelectorAll('.qty').forEach(inp=>{
 </script>
 </body>
 </html>
+
