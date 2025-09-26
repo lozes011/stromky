@@ -108,6 +108,51 @@
   @media (max-width: 360px){
     .table{ min-width: 340px; }
   }
+/* === PATCH: stabilní jeden řádek, lepší mobil, fix hover/input kontrastu === */
+
+/* Sloupce – desktop/tablet beze změny, jen explicitně zabraň zalomení čísel */
+.col-price, .col-sum { white-space: nowrap; }
+
+/* Tlačítka a inputy netlačí šířku buněk */
+.qtyctrl { max-width: 170px; }            /* ochranný strop */
+.qtyctrl .btn { min-width: 28px; }
+.qtyctrl .qty { min-width: 56px; }
+
+/* Když je řádek „hover“, nesahej na inputy (zůstane černý text a světlé pozadí) */
+.table tbody tr:hover input,
+.table tbody tr:focus-within input {
+  background: #f2f7f4 !important;
+  color: #111 !important;
+}
+
+/* Lepší sticky hlavička, ať je vždy čitelná nad barevnými řádky */
+.table thead th{
+  position: sticky; top: 0;
+  background: linear-gradient(#0a1c14,#0a1c14);
+  box-shadow: 0 1px 0 var(--line);
+  z-index: 2;
+}
+
+/* Mobil – pořád JEDEN řádek: zmenšíme čísla i ovládání, název má prioritu */
+@media (max-width: 640px){
+  .col-id   { width: 8%;  }
+  .col-price{ width: 14%; }
+  .col-qty  { width: 17%; }
+  .col-sum  { width: 18%; }
+
+  .table th,.table td{ padding:8px 6px; font-size: .95rem; }
+  .col-name{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .qtyctrl{ grid-template-columns: 28px 52px 28px; gap: .28rem; max-width: 140px; }
+  .qtyctrl .btn{ height: 28px; border-radius: 8px; font-size: .95rem; }
+  .qtyctrl .qty{ height: 28px; font-size: .95rem; }
+}
+
+/* Extra úzké – raději dovol horizontální posuv celé tabulce než lámat řádky */
+@media (max-width: 360px){
+  .table{ min-width: 340px; }
+}
+
 </style>
 </head>
 <body>
@@ -334,6 +379,13 @@ function recalc(){
 
 build();
 recalc();
+// PATCH: drž šílené vstupy na uzdě (max 5 číslic), ať nerozbijí řádek
+document.querySelectorAll('.qty').forEach(inp=>{
+  inp.addEventListener('input', ()=>{
+    inp.value = (inp.value+'').replace(/[^\d]/g,'').slice(0,5);
+  });
+});
+
 </script>
 </body>
 </html>
