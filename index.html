@@ -88,11 +88,21 @@ tr.row-treefood td{background:var(--treefood)}
 @media (max-width:640px){
   .qtyctrl{grid-template-columns:32px minmax(44px,1fr) 32px}
   .qtyctrl .btn,.qtyctrl .qty{height:32px}
+
   th.col-qty, td.col-qty{ position:sticky; right:0; z-index:4; }
   td.col-qty{ box-shadow:-6px 0 8px rgba(0,0,0,.18) }
-  th.col-price::after{content:"Cena/ks"} th.col-sum::after{content:"Suma"} th.col-qty::after{content:"Prod."}
-  th.col-price,th.col-sum,th.col-qty{color:transparent;position:relative;overflow:hidden}
-  th.col-price::after,th.col-sum::after,th.col-qty::after{color:var(--text);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 6px}
+
+  /* Oprava zdvojených hlaviček na mobilu */
+  th.col-price, th.col-sum, th.col-qty{
+    position:relative; overflow:hidden; white-space:nowrap; font-size:0;
+  }
+  th.col-price::after, th.col-sum::after, th.col-qty::after{
+    content: attr(data-mobile);
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center; padding:0 6px;
+    color:var(--text); font-size:.95rem; line-height:1.2; pointer-events:none;
+  }
+
   .table{min-width:680px}
 }
 
@@ -129,9 +139,9 @@ tr.row-treefood td{background:var(--treefood)}
             <tr>
               <th class="col-id">ID</th>
               <th class="col-name">Název</th>
-              <th class="col-price">Cena(Eur)</th>
-              <th class="col-qty">Prodané</th>
-              <th class="col-sum">Celkem(Eur)</th>
+              <th class="col-price" data-mobile="Cena/ks">Cena(Eur)</th>
+              <th class="col-qty"   data-mobile="Prod.">Prodané</th>
+              <th class="col-sum"   data-mobile="Suma">Celkem(Eur)</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -234,9 +244,8 @@ function build(){
   const tbody = el('#tbody');
   tbody.innerHTML = '';
 
-  // render všech položek
   ITEMS.forEach(it=>{
-    const tr = addRow(tbody, it);
+    addRow(tbody, it);
     // po AF vložíme AG – auto řádek
     if (it.id==='AF'){
       const ag = document.createElement('tr');
@@ -256,11 +265,11 @@ function build(){
 
 /* ===== Přepočet ===== */
 function recalc(){
-  // AG = počet stromů (kategorie TREES)
-  const agCount = ITEMS.reduce((a,it)=> a + (isTree(it)? (qty[it.id]||0):0), 0);
+  // AG = počet stromů (jen kategorie TREES = B–S) – AH se NEpočítá
+  const agCount = ITEMS.reduce((a,it)=> a + (isTree(it) ? (qty[it.id]||0) : 0), 0);
   if (agQtySpan) agQtySpan.textContent = String(agCount);
 
-  // Tržby (AG neexistuje v ITEMS, takže se sem nikdy nezapočítá)
+  // Tržby (AG není v ITEMS, takže se sem nikdy nezapočítá)
   const total = ITEMS.reduce((sum,it)=> sum + (qty[it.id]||0)*it.price, 0);
 
   // Počty pro KPI
