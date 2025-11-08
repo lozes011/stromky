@@ -107,7 +107,7 @@ tr.row-treefood td{background:var(--treefood)}
 
 <script>
 /* ===== Konfigurace / data ===== */
-const FEE={haluz:1,stojan:1,hnojivo:.3};
+const FEE={haluz:1,stojan:1,hnojivo:.7};
 const CATS={TREES:["smrk","borovice","jedle"],KV:"kvetinac",STAND:"stojan",SVC:"sluzby",HALUZ:"haluzimelo"};
 const ITEMS=[
 {id:"B",name:"Smrek",price:23.60,cat:"smrk"},
@@ -138,11 +138,11 @@ const ITEMS=[
 {id:"Y",name:"Stojan",price:83.00,cat:"stojan"},
 {id:"AB",name:"Haluz",price:4.90,cat:"haluzimelo"},
 {id:"AC",name:"Haluz",price:6.20,cat:"haluzimelo"},
-{id:"AD",name:"Imelo",price:2.90,cat:"haluzimelo"},
+{id:"AD",name:"Imelo",price:4.90,cat:"haluzimelo"},
 {id:"AE",name:"Frézování",price:3.90,cat:"sluzby",toSeller:true},
 {id:"AF",name:"Balení",price:3.90,cat:"sluzby",toSeller:true},
 {id:"AH",name:"Akce",price:12.90,cat:"akce"},
-{id:"AI",name:"Treefood",price:1.50,cat:"treefood"}
+{id:"AI",name:"Treefood",price:2.20,cat:"treefood"}
 ];
 
 /* ===== Stav & helpers ===== */
@@ -307,5 +307,6 @@ recalc();
 </script>
 </body>
 </html>
+
 
 
