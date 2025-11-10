@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Výpočet prodeje – vánoční stromky</title>
 <style>
-/* CSS zustava beze zmeny, pouze pridavam styl pro input ceny */
+/* Původní CSS - BEZE ZMĚN */
 :root{--bg:#06140e;--text:#e8f5ee;--muted:#9bc7b2;--card:#0a1c14;--line:#133322;--btn:#0e2a1d;--btn-accent:#29c374;--btn-accent-2:#1ea663;--smrk:#e6f5e9;--borovice:#dff6ea;--jedle:#C1FFC1;--kvetinac:#FFE4B5;--stojan:#eef1f4;--haluzimelo:#fff8d9;--sluzby:#efe5da;--kusy:#ffe9d6;--akce:var(--jedle);--treefood:#efe6ff;--text-dark:#0b1a12;--mark-saved-bg:#FF6347}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -49,16 +49,26 @@ tr.row-treefood td{background:var(--treefood)}
 .btn.plus{background:linear-gradient(0deg,var(--btn-accent-2),var(--btn-accent))}
 .btn.minus{background:#163a28}
 .qtyctrl .qty{width:100%;height:38px;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;font-weight:800}
+
+/* OPRAVENÝ STYL pro editovatelné pole, aby nepřerušilo layout */
 .price-input.mono {
     width: 100%; 
-    height: 38px; 
-    text-align: center; 
-    background: #f2f7f4; 
-    border: 1px solid var(--line); 
-    color: var(--text-dark); 
-    border-radius: 10px; 
-    font-weight: 800;
+    height: auto; 
+    text-align: right; 
+    background: transparent; 
+    border: none; 
+    color: inherit; 
+    padding: 0; 
+    margin: 0;
+    font-family: ui-monospace,Menlo,Consolas,monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800; 
+    font-size: 1rem;
 }
+.price-input.mono:focus {
+    outline: none; 
+}
+
 .table tbody tr:not(.mark-saved):hover td{background:#29c374!important;color:#fff!important}
 .table tbody tr.mark-saved td{background:var(--mark-saved-bg)!important;color:var(--text-dark)!important}
 .table tbody tr.mark-saved:hover td{background:var(--mark-saved-bg)!important;color:var(--text-dark)!important}
@@ -118,7 +128,6 @@ tr.row-treefood td{background:var(--treefood)}
 
 <script>
 /* ===== Konfigurace / data - ZMĚNY ZDE ===== */
-// FEE prepocitano z EUR na CZK (pri kurzu cca 25)
 const FEE={haluz:25,stojan:25,hnojivo:18}; 
 const CATS={TREES:["smrk","borovice","jedle"],KV:"kvetinac",STAND:"stojan",SVC:"sluzby",HALUZ:"haluzimelo"};
 
@@ -156,29 +165,29 @@ const ITEMS=[
 {id:"AH",name:"Akce",price:322.00,cat:"akce"},
 {id:"AI",name:"Treefood",price:55.00,cat:"treefood"},
 
-// NOVÉ EDITOVATELNÉ STROMY PŘESUNUTY ZDE (ZA Treefood)
-{id:"X1",name:"Jedle Premium (Vlastní cena)",price:0.00,cat:"jedle",custom:true},
-{id:"X2",name:"Borovice (Vlastní cena)",price:0.00,cat:"borovice",custom:true},
-{id:"X3",name:"Smrk (Vlastní cena)",price:0.00,cat:"smrk",custom:true}
+// NOVÉ EDITOVATELNÉ STROMY DLE VAŠEHO PŘÁNÍ
+{id:"AJ",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}, // Původně X1
+{id:"AK",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}, // Původně X2
+{id:"AL",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}  // Původně X3
 ];
 
-/* ===== Stav & helpers - ZMĚNY ZDE ===== */
+/* ===== Stav & helpers ===== */
 const qty=Object.fromEntries(ITEMS.map(i=>[i.id,0]));
 const byId=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
 const el=s=>document.querySelector(s);
 const fmtNum=n=>new Intl.NumberFormat("cs-CZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtCzk=n=>`${fmtNum(n)} Kč`; // ZMĚNA MĚNY: EUR -> Kč
+const fmtCzk=n=>`${fmtNum(n)} Kč`; 
 const isTree=it=>CATS.TREES.includes(it.cat);
+// Všechny custom stromy jsou zařazeny pod row-akce
 const trClass=cat=>({smrk:"row-smrk",borovice:"row-borovice",jedle:"row-jedle",kvetinac:"row-kvetinac",stojan:"row-stojan",haluzimelo:"row-haluzimelo",sluzby:"row-sluzby",akce:"row-akce",treefood:"row-treefood"})[cat]||"";
 let agQtySpan=null;
 
-/* ===== Render tabulky - ZMĚNY ZDE (OPRAVA FORMÁTOVÁNÍ) ===== */
+/* ===== Render tabulky ===== */
 function addRow(parent,it){
   const tr=document.createElement("tr");
   tr.className=trClass(it.cat);
   tr.dataset.id=it.id;
   
-  // Podmíněné vykreslení buď statické ceny, nebo inputu pro editovatelnou cenu
   const priceContent = it.custom 
     ? `<input class="price-input mono" type="text" inputmode="decimal" value="${fmtNum(it.price)}" data-id="${it.id}">` 
     : fmtNum(it.price);
@@ -206,14 +215,14 @@ function build(){
   tbody.innerHTML="";
   ITEMS.forEach(it=>{
     addRow(tbody,it);
-    // ... pridani AG (Auto: pocet stromu) po radku AF
+    // Vlozeni radku Auto: pocet stromu po AF
     if(it.id==="AF"){
       const ag=document.createElement("tr");
       ag.className=trClass("sluzby");
       ag.dataset.id="AG";
       ag.innerHTML=`
         <td class="col-id"><span class="rowid mono">AG</span></td>
-        <td class="col-name">Auto: počet stromů (D–S, X1–X3)</td>
+        <td class="col-name">Auto: počet stromů (D–S, AH, AJ–AL)</td>
         <td class="col-price mono">0,00</td>
         <td class="col-qty"><span class="mono" id="agQty">0</span></td>
         <td class="col-sum mono">0,00</td>`;
@@ -223,16 +232,16 @@ function build(){
   });
 }
 
-/* ===== Přepočet - ZMĚNY ZDE (Měna) ===== */
+/* ===== Přepočet ===== */
 function recalc(){
-  // AG = pouze stromy (D–S) + custom stromy (X1–X3)
-  const agCount=ITEMS.reduce((a,it)=>a+((isTree(it)||it.custom)?(qty[it.id]||0):0),0); // Opraveno: zahrnuje i custom stromy
+  // AG = pouze stromy, akce (AH) a custom akce (AJ-AL)
+  const agCount=ITEMS.reduce((a,it)=>a+((isTree(it)||it.id==="AH"||it.custom)?(qty[it.id]||0):0),0);
   if(agQtySpan) agQtySpan.textContent=String(agCount);
 
   const total=ITEMS.reduce((sum,it)=>sum+(qty[it.id]||0)*it.price,0);
 
-  // cntStromy zahrnuje Akce (AH) a custom stromy (X1, X2, X3)
-  const cntStromy=ITEMS.reduce((a,it)=>a+((isTree(it)||it.id==="AH"||it.custom)?(qty[it.id]||0):0),0); 
+  // cntStromy zahrnuje všechny stromy, Akce a custom akce
+  const cntStromy=agCount;
   const cntKvetinace=ITEMS.reduce((a,it)=>a+(it.cat===CATS.KV?qty[it.id]||0:0),0);
   const cntStojany=ITEMS.reduce((a,it)=>a+(it.cat===CATS.STAND?qty[it.id]||0:0),0);
   const cntSluzby=ITEMS.reduce((a,it)=>a+(it.cat===CATS.SVC?qty[it.id]||0:0),0);
@@ -266,7 +275,7 @@ function recalc(){
   });
 }
 
-/* ===== Ovládání (delegace) - NOVÁ LOGIKA PRO CENU ZDE ===== */
+/* ===== Ovládání (delegace) ===== */
 function clampInt(v){v=(v+"").replace(/[^\d]/g,"");return Math.max(0,parseInt(v||"0",10))}
 
 // 1. Logika pro tlačítka +/- a množství
@@ -298,18 +307,14 @@ document.addEventListener("input",e=>{
   const id=e.target.dataset.id;
   if(!id||!byId[id]) return;
   
-  // Získání a čištění vstupu: povolit čísla, čárky a tečky
   let val = (e.target.value + "").replace(/[^\d,.]/g, '');
-  val = val.replace(',', '.'); // Nahraď čárku tečkou pro JS float
+  val = val.replace(',', '.');
   
-  // Aktualizace ceny v našem stavovém objektu byId
   const newPrice = parseFloat(val) || 0;
   byId[id].price = newPrice;
   
-  // Udržujeme formát v poli pro uživatele (zaokrouhlení na 2 desetinná místa)
   e.target.value = fmtNum(newPrice);
 
-  // Spuštění přepočtu
   recalc();
 });
 
@@ -319,10 +324,9 @@ document.getElementById("calcForm").addEventListener("reset",()=>{
     Object.keys(qty).forEach(k=>qty[k]=0);
     document.querySelectorAll(".qty").forEach(i=>i.value="0");
     
-    // Reset editovatelných cen (Custom stromy X1, X2, X3)
+    // Reset editovatelných cen (AJ, AK, AL)
     document.querySelectorAll(".price-input").forEach(inp => {
         const id = inp.dataset.id;
-        // Jen pro custom položky resetujeme cenu v datech na 0.00
         if (byId[id] && byId[id].custom) {
             byId[id].price = 0.00; 
             inp.value = fmtNum(0);
@@ -339,7 +343,7 @@ document.getElementById("calcForm").addEventListener("reset",()=>{
 build();
 recalc();
 
-/* ===== Ochrany proti prohlížení kódu (odrazující, nikoli neprůstřelné) - BEZE ZMĚN ===== */
+/* ===== Ochrany proti prohlížení kódu (odrazující, nikoli neprůstřelné) ===== */
 (function(){
   // Blokace pravého tlačítka
   document.addEventListener("contextmenu",e=>e.preventDefault(),{passive:false});
