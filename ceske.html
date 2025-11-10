@@ -124,11 +124,6 @@ const CATS={TREES:["smrk","borovice","jedle"],KV:"kvetinac",STAND:"stojan",SVC:"
 
 // Puvodni ceny z EUR * 25 (zaokrouhleno)
 const ITEMS=[
-// NOVÉ EDITOVATELNÉ STROMY PRIDANY ZDE
-{id:"X1",name:"Jedle Premium (Vlastní cena)",price:0.00,cat:"jedle",custom:true},
-{id:"X2",name:"Borovice (Vlastní cena)",price:0.00,cat:"borovice",custom:true},
-{id:"X3",name:"Smrk (Vlastní cena)",price:0.00,cat:"smrk",custom:true},
-
 {id:"D",name:"Borovice",price:999.00,cat:"borovice"}, 
 {id:"E",name:"Borovice",price:1248.00,cat:"borovice"},
 {id:"F",name:"Borovice",price:1498.00,cat:"borovice"},
@@ -159,7 +154,12 @@ const ITEMS=[
 {id:"AE",name:"Frézování",price:98.00,cat:"sluzby",toSeller:true},
 {id:"AF",name:"Balení",price:98.00,cat:"sluzby",toSeller:true},
 {id:"AH",name:"Akce",price:322.00,cat:"akce"},
-{id:"AI",name:"Treefood",price:55.00,cat:"treefood"}
+{id:"AI",name:"Treefood",price:55.00,cat:"treefood"},
+
+// NOVÉ EDITOVATELNÉ STROMY PŘESUNUTY ZDE (ZA Treefood)
+{id:"X1",name:"Jedle Premium (Vlastní cena)",price:0.00,cat:"jedle",custom:true},
+{id:"X2",name:"Borovice (Vlastní cena)",price:0.00,cat:"borovice",custom:true},
+{id:"X3",name:"Smrk (Vlastní cena)",price:0.00,cat:"smrk",custom:true}
 ];
 
 /* ===== Stav & helpers - ZMĚNY ZDE ===== */
@@ -172,18 +172,22 @@ const isTree=it=>CATS.TREES.includes(it.cat);
 const trClass=cat=>({smrk:"row-smrk",borovice:"row-borovice",jedle:"row-jedle",kvetinac:"row-kvetinac",stojan:"row-stojan",haluzimelo:"row-haluzimelo",sluzby:"row-sluzby",akce:"row-akce",treefood:"row-treefood"})[cat]||"";
 let agQtySpan=null;
 
-/* ===== Render tabulky - ZMĚNY ZDE ===== */
+/* ===== Render tabulky - ZMĚNY ZDE (OPRAVA FORMÁTOVÁNÍ) ===== */
 function addRow(parent,it){
   const tr=document.createElement("tr");
   tr.className=trClass(it.cat);
   tr.dataset.id=it.id;
+  
+  // Podmíněné vykreslení buď statické ceny, nebo inputu pro editovatelnou cenu
+  const priceContent = it.custom 
+    ? `<input class="price-input mono" type="text" inputmode="decimal" value="${fmtNum(it.price)}" data-id="${it.id}">` 
+    : fmtNum(it.price);
+  
   tr.innerHTML=`
     <td class="col-id"><span class="rowid mono">${it.id}</span></td>
     <td class="col-name">${it.name}</td>
     <td class="col-price mono" data-price>
-      ${it.custom // Zjisti, zda je polozka editovatelna
-        ? `<input class="price-input mono" type="text" inputmode="decimal" value="${fmtNum(it.price)}" data-id="${it.id}">` 
-        : fmtNum(it.price)}
+      ${priceContent}
     </td>
     <td class="col-qty" data-qty>
       <div class="qtyctrl">
@@ -222,12 +226,13 @@ function build(){
 /* ===== Přepočet - ZMĚNY ZDE (Měna) ===== */
 function recalc(){
   // AG = pouze stromy (D–S) + custom stromy (X1–X3)
-  const agCount=ITEMS.reduce((a,it)=>a+(isTree(it)?(qty[it.id]||0):0),0);
+  const agCount=ITEMS.reduce((a,it)=>a+((isTree(it)||it.custom)?(qty[it.id]||0):0),0); // Opraveno: zahrnuje i custom stromy
   if(agQtySpan) agQtySpan.textContent=String(agCount);
 
   const total=ITEMS.reduce((sum,it)=>sum+(qty[it.id]||0)*it.price,0);
 
-  const cntStromy=ITEMS.reduce((a,it)=>a+((isTree(it)||it.id==="AH")?(qty[it.id]||0):0),0);
+  // cntStromy zahrnuje Akce (AH) a custom stromy (X1, X2, X3)
+  const cntStromy=ITEMS.reduce((a,it)=>a+((isTree(it)||it.id==="AH"||it.custom)?(qty[it.id]||0):0),0); 
   const cntKvetinace=ITEMS.reduce((a,it)=>a+(it.cat===CATS.KV?qty[it.id]||0:0),0);
   const cntStojany=ITEMS.reduce((a,it)=>a+(it.cat===CATS.STAND?qty[it.id]||0:0),0);
   const cntSluzby=ITEMS.reduce((a,it)=>a+(it.cat===CATS.SVC?qty[it.id]||0:0),0);
@@ -243,9 +248,9 @@ function recalc(){
 
   const sellerKeepDisplay=Math.max(0,sellerKeep);
 
-  el("#todaySales").textContent=fmtCzk(total); // ZMĚNA MĚNY
-  el("#sellerKeep").textContent=fmtCzk(sellerKeepDisplay); // ZMĚNA MĚNY
-  el("#envelope").textContent=fmtCzk(envelope); // ZMĚNA MĚNY
+  el("#todaySales").textContent=fmtCzk(total);
+  el("#sellerKeep").textContent=fmtCzk(sellerKeepDisplay);
+  el("#envelope").textContent=fmtCzk(envelope);
 
   el("#cntStromy").textContent=String(cntStromy);
   el("#cntKvetinace").textContent=String(cntKvetinace);
@@ -301,7 +306,7 @@ document.addEventListener("input",e=>{
   const newPrice = parseFloat(val) || 0;
   byId[id].price = newPrice;
   
-  // Udržujeme formát v poli pro uživatele
+  // Udržujeme formát v poli pro uživatele (zaokrouhlení na 2 desetinná místa)
   e.target.value = fmtNum(newPrice);
 
   // Spuštění přepočtu
@@ -317,9 +322,10 @@ document.getElementById("calcForm").addEventListener("reset",()=>{
     // Reset editovatelných cen (Custom stromy X1, X2, X3)
     document.querySelectorAll(".price-input").forEach(inp => {
         const id = inp.dataset.id;
+        // Jen pro custom položky resetujeme cenu v datech na 0.00
         if (byId[id] && byId[id].custom) {
-            byId[id].price = 0.00; // Nastavíme zpět na nulu v datech
-            inp.value = fmtNum(0); // Nastavíme v poli
+            byId[id].price = 0.00; 
+            inp.value = fmtNum(0);
         }
     });
 
