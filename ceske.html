@@ -49,26 +49,6 @@ tr.row-treefood td{background:var(--treefood)}
 .btn.plus{background:linear-gradient(0deg,var(--btn-accent-2),var(--btn-accent))}
 .btn.minus{background:#163a28}
 .qtyctrl .qty{width:100%;height:38px;text-align:center;background:#f2f7f4;border:1px solid var(--line);color:var(--text-dark);border-radius:10px;font-weight:800}
-
-/* OPRAVENÝ STYL pro editovatelné pole, aby nepřerušilo layout */
-.price-input.mono {
-    width: 100%; 
-    height: auto; 
-    text-align: right; 
-    background: transparent; 
-    border: none; 
-    color: inherit; 
-    padding: 0; 
-    margin: 0;
-    font-family: ui-monospace,Menlo,Consolas,monospace;
-    font-variant-numeric: tabular-nums;
-    font-weight: 800; 
-    font-size: 1rem;
-}
-.price-input.mono:focus {
-    outline: none; 
-}
-
 .table tbody tr:not(.mark-saved):hover td{background:#29c374!important;color:#fff!important}
 .table tbody tr.mark-saved td{background:var(--mark-saved-bg)!important;color:var(--text-dark)!important}
 .table tbody tr.mark-saved:hover td{background:var(--mark-saved-bg)!important;color:var(--text-dark)!important}
@@ -84,6 +64,32 @@ tr.row-treefood td{background:var(--treefood)}
 }
 #agQty{display:inline-block;min-width:2ch;text-align:center}
 .section-title{margin:0 0 8px;font-size:1.1rem}
+
+/* OPRAVA STYLU PRO INPUT, ABY NENARUŠIL BARVU POZADÍ BUŇKY */
+.col-price .price-input {
+    /* Převzít styl textu a zarovnání */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit; 
+    
+    /* Vizuální reset */
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    
+    /* Zajištění, že se input roztáhne přes celou buňku pro zachování barvy pozadí */
+    display: block; 
+}
+
+/* Upravení buňky s inputem pro správné paddingy a zarovnání */
+td.col-price.mono[data-price] {
+    padding: 8px; /* Původní padding buňky */
+}
+
 </style>
 </head>
 <body>
@@ -95,9 +101,9 @@ tr.row-treefood td{background:var(--treefood)}
 
   <div class="card">
     <div class="kpis">
-      <div class="kpi"><h3>Dnešní prodej</h3><div class="v mono" id="todaySales">0,00 Kč</div></div>
-      <div class="kpi"><h3>Odevzdat do obálky</h3><div class="v mono" id="envelope">0,00 Kč</div></div>
-      <div class="kpi"><h3>Co zůstává dnes prodejci</h3><div class="v mono" id="sellerKeep">0,00 Kč</div></div>
+      <div class="kpi"><h3>Dnešní prodej</h3><div class="v mono" id="todaySales">0,00 Eur</div></div>
+      <div class="kpi"><h3>Odevzdat do obálky</h3><div class="v mono" id="envelope">0,00 Eur</div></div>
+      <div class="kpi"><h3>Co zůstává dnes prodejci</h3><div class="v mono" id="sellerKeep">0,00 Eur</div></div>
       <div class="kpi"><h3>Počet prodaných stromů</h3><div class="v mono" id="cntStromy">0</div></div>
       <div class="kpi"><h3>Počet prodaných květináčů</h3><div class="v mono" id="cntKvetinace">0</div></div>
       <div class="kpi"><h3>Počet prodaných stojanů</h3><div class="v mono" id="cntStojany">0</div></div>
@@ -114,9 +120,9 @@ tr.row-treefood td{background:var(--treefood)}
             <tr>
               <th class="col-id">ID</th>
               <th class="col-name">Název</th>
-              <th class="col-price" data-mobile="Cena/ks">Cena(Kč)</th>
+              <th class="col-price" data-mobile="Cena/ks">Cena(Eur)</th>
               <th class="col-qty" data-mobile="Prod.">Prodané</th>
-              <th class="col-sum" data-mobile="Suma">Celkem(Kč)</th>
+              <th class="col-sum" data-mobile="Suma">Celkem(Eur)</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -127,48 +133,46 @@ tr.row-treefood td{background:var(--treefood)}
 </div>
 
 <script>
-/* ===== Konfigurace / data - ZMĚNY ZDE ===== */
-const FEE={haluz:25,stojan:25,hnojivo:18}; 
+/* ===== Konfigurace / data - NÁVRAT K EUR CENÁM Z VAŠEHO VZORU ===== */
+const FEE={haluz:1,stojan:1,hnojivo:.7};
 const CATS={TREES:["smrk","borovice","jedle"],KV:"kvetinac",STAND:"stojan",SVC:"sluzby",HALUZ:"haluzimelo"};
-
-// Puvodni ceny z EUR * 25 (zaokrouhleno)
 const ITEMS=[
-{id:"D",name:"Borovice",price:999.00,cat:"borovice"}, 
-{id:"E",name:"Borovice",price:1248.00,cat:"borovice"},
-{id:"F",name:"Borovice",price:1498.00,cat:"borovice"},
-{id:"G",name:"Borovice",price:1748.00,cat:"borovice"},
-{id:"H",name:"Jedľa Akcia",price:498.00,cat:"jedle"},
-{id:"I",name:"Jedľa Akcia",price:690.00,cat:"jedle"},
-{id:"J",name:"Jedľa Akcia",price:868.00,cat:"jedle"},
-{id:"K",name:"Jedľa Akcia",price:999.00,cat:"jedle"},
-{id:"L",name:"Jedľa Akcia",price:1210.00,cat:"jedle"},
-{id:"M",name:"Jedľa Nordmann",price:1388.00,cat:"jedle"},
-{id:"N",name:"Jedľa Nordmann",price:1640.00,cat:"jedle"},
-{id:"O",name:"Jedľa Premium",price:1902.00,cat:"jedle"},
-{id:"P",name:"Jedľa Premium",price:2220.00,cat:"jedle"},
-{id:"Q",name:"Jedľa Premium",price:2498.00,cat:"jedle"},
-{id:"R",name:"Jedľa Premium",price:3375.00,cat:"jedle"},
-{id:"S",name:"Jedľa Premium",price:4125.00,cat:"jedle"},
-{id:"T",name:"Květináč",price:995.00,cat:"kvetinac"},
-{id:"Z",name:"Květináč",price:1085.00,cat:"kvetinac"},
-{id:"AA",name:"Květináč",price:1248.00,cat:"kvetinac"},
-{id:"U",name:"Stojan",price:850.00,cat:"stojan"},
-{id:"V",name:"Stojan",price:1150.00,cat:"stojan"},
-{id:"W",name:"Stojan",price:1300.00,cat:"stojan"},
-{id:"X",name:"Stojan",price:1625.00,cat:"stojan"},
-{id:"Y",name:"Stojan",price:2075.00,cat:"stojan"},
-{id:"AB",name:"Haluz",price:122.00,cat:"haluzimelo"},
-{id:"AC",name:"Haluz",price:155.00,cat:"haluzimelo"},
-{id:"AD",name:"Imelo",price:122.00,cat:"haluzimelo"},
-{id:"AE",name:"Frézování",price:98.00,cat:"sluzby",toSeller:true},
-{id:"AF",name:"Balení",price:98.00,cat:"sluzby",toSeller:true},
-{id:"AH",name:"Akce",price:322.00,cat:"akce"},
-{id:"AI",name:"Treefood",price:55.00,cat:"treefood"},
+{id:"D",name:"Borovice",price:39.90,cat:"borovice"},
+{id:"E",name:"Borovice",price:49.90,cat:"borovice"},
+{id:"F",name:"Borovice",price:59.90,cat:"borovice"},
+{id:"G",name:"Borovice",price:69.90,cat:"borovice"},
+{id:"H",name:"Jedľa Akcia",price:19.90,cat:"jedle"},
+{id:"I",name:"Jedľa Akcia",price:27.60,cat:"jedle"},
+{id:"J",name:"Jedľa Akcia",price:34.70,cat:"jedle"},
+{id:"K",name:"Jedľa Akcia",price:39.90,cat:"jedle"},
+{id:"L",name:"Jedľa Akcia",price:48.40,cat:"jedle"},
+{id:"M",name:"Jedľa Nordmann",price:55.50,cat:"jedle"},
+{id:"N",name:"Jedľa Nordmann",price:65.60,cat:"jedle"},
+{id:"O",name:"Jedľa Premium",price:76.10,cat:"jedle"},
+{id:"P",name:"Jedľa Premium",price:88.80,cat:"jedle"},
+{id:"Q",name:"Jedľa Premium",price:99.90,cat:"jedle"},
+{id:"R",name:"Jedľa Premium",price:135.00,cat:"jedle"},
+{id:"S",name:"Jedľa Premium",price:165.00,cat:"jedle"},
+{id:"T",name:"Květináč",price:39.80,cat:"kvetinac"},
+{id:"Z",name:"Květináč",price:43.40,cat:"kvetinac"},
+{id:"AA",name:"Květináč",price:49.90,cat:"kvetinac"},
+{id:"U",name:"Stojan",price:34.00,cat:"stojan"},
+{id:"V",name:"Stojan",price:46.00,cat:"stojan"},
+{id:"W",name:"Stojan",price:52.00,cat:"stojan"},
+{id:"X",name:"Stojan",price:65.00,cat:"stojan"},
+{id:"Y",name:"Stojan",price:83.00,cat:"stojan"},
+{id:"AB",name:"Haluz",price:4.90,cat:"haluzimelo"},
+{id:"AC",name:"Haluz",price:6.20,cat:"haluzimelo"},
+{id:"AD",name:"Imelo",price:4.90,cat:"haluzimelo"},
+{id:"AE",name:"Frézování",price:3.90,cat:"sluzby",toSeller:true},
+{id:"AF",name:"Balení",price:3.90,cat:"sluzby",toSeller:true},
+{id:"AH",name:"Akce",price:12.90,cat:"akce"},
+{id:"AI",name:"Treefood",price:2.20,cat:"treefood"},
 
-// NOVÉ EDITOVATELNÉ STROMY DLE VAŠEHO PŘÁNÍ
-{id:"AJ",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}, // Původně X1
-{id:"AK",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}, // Původně X2
-{id:"AL",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}  // Původně X3
+// EDITOVATELNÉ ŘÁDKY - ID: AJ, AK, AL | Název: Akce | Kategorie: akce
+{id:"AJ",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true},
+{id:"AK",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true},
+{id:"AL",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}
 ];
 
 /* ===== Stav & helpers ===== */
@@ -176,18 +180,18 @@ const qty=Object.fromEntries(ITEMS.map(i=>[i.id,0]));
 const byId=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
 const el=s=>document.querySelector(s);
 const fmtNum=n=>new Intl.NumberFormat("cs-CZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtCzk=n=>`${fmtNum(n)} Kč`; 
-const isTree=it=>CATS.TREES.includes(it.cat);
-// Všechny custom stromy jsou zařazeny pod row-akce
+const fmtEur=n=>`${fmtNum(n)} Eur`; // Návrat k EUR
+const isTree=it=>CATS.TREES.includes(it.cat) || it.id === "AH" || it.custom; // Strom, Akce nebo Custom akce
 const trClass=cat=>({smrk:"row-smrk",borovice:"row-borovice",jedle:"row-jedle",kvetinac:"row-kvetinac",stojan:"row-stojan",haluzimelo:"row-haluzimelo",sluzby:"row-sluzby",akce:"row-akce",treefood:"row-treefood"})[cat]||"";
 let agQtySpan=null;
 
-/* ===== Render tabulky ===== */
+/* ===== Render tabulky - Oprava vykreslení inputu do buňky ===== */
 function addRow(parent,it){
   const tr=document.createElement("tr");
   tr.className=trClass(it.cat);
   tr.dataset.id=it.id;
   
+  // Podmíněné vykreslení buď statické ceny, nebo inputu pro editovatelnou cenu
   const priceContent = it.custom 
     ? `<input class="price-input mono" type="text" inputmode="decimal" value="${fmtNum(it.price)}" data-id="${it.id}">` 
     : fmtNum(it.price);
@@ -232,15 +236,15 @@ function build(){
   });
 }
 
-/* ===== Přepočet ===== */
+/* ===== Přepočet - ÚPRAVA PRO POUŽITÍ NOVÝCH ID (AJ-AL) ===== */
 function recalc(){
-  // AG = pouze stromy, akce (AH) a custom akce (AJ-AL)
-  const agCount=ITEMS.reduce((a,it)=>a+((isTree(it)||it.id==="AH"||it.custom)?(qty[it.id]||0):0),0);
+  // AG = Všechny stromy (D–S), Akce (AH) a custom akce (AJ-AL)
+  const agCount=ITEMS.reduce((a,it)=>a+(isTree(it)?(qty[it.id]||0):0),0);
   if(agQtySpan) agQtySpan.textContent=String(agCount);
 
   const total=ITEMS.reduce((sum,it)=>sum+(qty[it.id]||0)*it.price,0);
 
-  // cntStromy zahrnuje všechny stromy, Akce a custom akce
+  // cntStromy se rovná agCount
   const cntStromy=agCount;
   const cntKvetinace=ITEMS.reduce((a,it)=>a+(it.cat===CATS.KV?qty[it.id]||0:0),0);
   const cntStojany=ITEMS.reduce((a,it)=>a+(it.cat===CATS.STAND?qty[it.id]||0:0),0);
@@ -257,9 +261,9 @@ function recalc(){
 
   const sellerKeepDisplay=Math.max(0,sellerKeep);
 
-  el("#todaySales").textContent=fmtCzk(total);
-  el("#sellerKeep").textContent=fmtCzk(sellerKeepDisplay);
-  el("#envelope").textContent=fmtCzk(envelope);
+  el("#todaySales").textContent=fmtEur(total);
+  el("#sellerKeep").textContent=fmtEur(sellerKeepDisplay);
+  el("#envelope").textContent=fmtEur(envelope);
 
   el("#cntStromy").textContent=String(cntStromy);
   el("#cntKvetinace").textContent=String(cntKvetinace);
@@ -278,7 +282,7 @@ function recalc(){
 /* ===== Ovládání (delegace) ===== */
 function clampInt(v){v=(v+"").replace(/[^\d]/g,"");return Math.max(0,parseInt(v||"0",10))}
 
-// 1. Logika pro tlačítka +/- a množství
+// 1. Množství +/-
 document.addEventListener("click",e=>{
   const btn=e.target.closest(".btn"); if(!btn) return;
   const wrap=btn.closest("tr");
@@ -291,7 +295,7 @@ document.addEventListener("click",e=>{
   recalc();
 });
 
-// 2. Logika pro ruční zadávání množství
+// 2. Množství ručně
 document.addEventListener("input",e=>{
   if(!e.target.classList.contains("qty")) return;
   const tr=e.target.closest("tr"); const id=tr?.dataset.id;
@@ -301,18 +305,22 @@ document.addEventListener("input",e=>{
   recalc();
 });
 
-// 3. LOGIKA PRO EDITOVATELNOU CENU
+// 3. EDITOVATELNÁ CENA (včetně opravy zobrazení čárky/tečky)
 document.addEventListener("input",e=>{
   if(!e.target.classList.contains("price-input")) return;
   const id=e.target.dataset.id;
   if(!id||!byId[id]) return;
   
+  // Povoluje pouze čísla, čárky a tečky
   let val = (e.target.value + "").replace(/[^\d,.]/g, '');
-  val = val.replace(',', '.');
   
-  const newPrice = parseFloat(val) || 0;
+  // Nahradí čárku tečkou pro JavaScript, aby bylo možné parsovat číslo
+  let parsedVal = val.replace(',', '.');
+  
+  const newPrice = parseFloat(parsedVal) || 0;
   byId[id].price = newPrice;
   
+  // Zobrazí hodnotu zpět ve formátu s čárkou (dle cs-CZ)
   e.target.value = fmtNum(newPrice);
 
   recalc();
