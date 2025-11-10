@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Výpočet prodeje – vánoční stromky</title>
 <style>
-/* Původní CSS - BEZE ZMĚN */
+/* Původní CSS - Nyní ZCELA BEZ ZBYTEČNÝCH ÚPRAV */
 :root{--bg:#06140e;--text:#e8f5ee;--muted:#9bc7b2;--card:#0a1c14;--line:#133322;--btn:#0e2a1d;--btn-accent:#29c374;--btn-accent-2:#1ea663;--smrk:#e6f5e9;--borovice:#dff6ea;--jedle:#C1FFC1;--kvetinac:#FFE4B5;--stojan:#eef1f4;--haluzimelo:#fff8d9;--sluzby:#efe5da;--kusy:#ffe9d6;--akce:var(--jedle);--treefood:#efe6ff;--text-dark:#0b1a12;--mark-saved-bg:#FF6347}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -65,31 +65,28 @@ tr.row-treefood td{background:var(--treefood)}
 #agQty{display:inline-block;min-width:2ch;text-align:center}
 .section-title{margin:0 0 8px;font-size:1.1rem}
 
-/* OPRAVA STYLU PRO INPUT, ABY NENARUŠIL BARVU POZADÍ BUŇKY */
+
+/* NOVÉ JEDNODUŠŠÍ A FUNKČNÍ PŘEPSÁNÍ STYLU PRO INPUT */
+/* Zajišťuje, že input zdědí barvu pozadí buňky a bude vypadat jako statický text */
 .col-price .price-input {
-    /* Převzít styl textu a zarovnání */
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    color: inherit; 
-    
-    /* Vizuální reset */
+    width: 100%;
+    /* Odstranění rámečků, pozadí a paddingů typických pro input */
     background: transparent;
     border: none;
-    padding: 0;
+    padding: 0; 
     margin: 0;
-    width: 100%;
-    text-align: right;
     
-    /* Zajištění, že se input roztáhne přes celou buňku pro zachování barvy pozadí */
-    display: block; 
+    /* Zajištění, že input zdědí monospace písmo a barvu */
+    font-family: ui-monospace,Menlo,Consolas,monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800; /* Děděno z .mono třídy */
+    color: inherit; /* Dědí barvu textu buňky (text-dark) */
+    text-align: right;
 }
 
-/* Upravení buňky s inputem pro správné paddingy a zarovnání */
-td.col-price.mono[data-price] {
-    padding: 8px; /* Původní padding buňky */
+.col-price .price-input:focus {
+    outline: none; /* Odstraní rámeček při zaměření */
 }
-
 </style>
 </head>
 <body>
@@ -133,7 +130,7 @@ td.col-price.mono[data-price] {
 </div>
 
 <script>
-/* ===== Konfigurace / data - NÁVRAT K EUR CENÁM Z VAŠEHO VZORU ===== */
+/* ===== Konfigurace / data ===== */
 const FEE={haluz:1,stojan:1,hnojivo:.7};
 const CATS={TREES:["smrk","borovice","jedle"],KV:"kvetinac",STAND:"stojan",SVC:"sluzby",HALUZ:"haluzimelo"};
 const ITEMS=[
@@ -169,7 +166,7 @@ const ITEMS=[
 {id:"AH",name:"Akce",price:12.90,cat:"akce"},
 {id:"AI",name:"Treefood",price:2.20,cat:"treefood"},
 
-// EDITOVATELNÉ ŘÁDKY - ID: AJ, AK, AL | Název: Akce | Kategorie: akce
+// EDITOVATELNÉ ŘÁDKY
 {id:"AJ",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true},
 {id:"AK",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true},
 {id:"AL",name:"Akce (Vlastní cena)",price:0.00,cat:"akce",custom:true}
@@ -179,9 +176,10 @@ const ITEMS=[
 const qty=Object.fromEntries(ITEMS.map(i=>[i.id,0]));
 const byId=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
 const el=s=>document.querySelector(s);
+// Změna: cs-CZ formátování používá čárku jako oddělovač desetinných míst
 const fmtNum=n=>new Intl.NumberFormat("cs-CZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n||0);
-const fmtEur=n=>`${fmtNum(n)} Eur`; // Návrat k EUR
-const isTree=it=>CATS.TREES.includes(it.cat) || it.id === "AH" || it.custom; // Strom, Akce nebo Custom akce
+const fmtEur=n=>`${fmtNum(n)} Eur`; 
+const isTree=it=>CATS.TREES.includes(it.cat) || it.id === "AH" || it.custom; 
 const trClass=cat=>({smrk:"row-smrk",borovice:"row-borovice",jedle:"row-jedle",kvetinac:"row-kvetinac",stojan:"row-stojan",haluzimelo:"row-haluzimelo",sluzby:"row-sluzby",akce:"row-akce",treefood:"row-treefood"})[cat]||"";
 let agQtySpan=null;
 
@@ -191,7 +189,7 @@ function addRow(parent,it){
   tr.className=trClass(it.cat);
   tr.dataset.id=it.id;
   
-  // Podmíněné vykreslení buď statické ceny, nebo inputu pro editovatelnou cenu
+  // PODMÍNKA pro editovatelné vs. statické pole
   const priceContent = it.custom 
     ? `<input class="price-input mono" type="text" inputmode="decimal" value="${fmtNum(it.price)}" data-id="${it.id}">` 
     : fmtNum(it.price);
@@ -236,7 +234,7 @@ function build(){
   });
 }
 
-/* ===== Přepočet - ÚPRAVA PRO POUŽITÍ NOVÝCH ID (AJ-AL) ===== */
+/* ===== Přepočet ===== */
 function recalc(){
   // AG = Všechny stromy (D–S), Akce (AH) a custom akce (AJ-AL)
   const agCount=ITEMS.reduce((a,it)=>a+(isTree(it)?(qty[it.id]||0):0),0);
@@ -244,7 +242,6 @@ function recalc(){
 
   const total=ITEMS.reduce((sum,it)=>sum+(qty[it.id]||0)*it.price,0);
 
-  // cntStromy se rovná agCount
   const cntStromy=agCount;
   const cntKvetinace=ITEMS.reduce((a,it)=>a+(it.cat===CATS.KV?qty[it.id]||0:0),0);
   const cntStojany=ITEMS.reduce((a,it)=>a+(it.cat===CATS.STAND?qty[it.id]||0:0),0);
@@ -305,7 +302,7 @@ document.addEventListener("input",e=>{
   recalc();
 });
 
-// 3. EDITOVATELNÁ CENA (včetně opravy zobrazení čárky/tečky)
+// 3. EDITOVATELNÁ CENA 
 document.addEventListener("input",e=>{
   if(!e.target.classList.contains("price-input")) return;
   const id=e.target.dataset.id;
@@ -314,7 +311,7 @@ document.addEventListener("input",e=>{
   // Povoluje pouze čísla, čárky a tečky
   let val = (e.target.value + "").replace(/[^\d,.]/g, '');
   
-  // Nahradí čárku tečkou pro JavaScript, aby bylo možné parsovat číslo
+  // Nahradí čárku tečkou pro JavaScript (pro parseFloat)
   let parsedVal = val.replace(',', '.');
   
   const newPrice = parseFloat(parsedVal) || 0;
